@@ -1,0 +1,175 @@
+// schema.prisma — ColocBénin
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Enums ────────────────────────────────────────────────────────────────────
+
+enum TypeCompte {
+  ETUDIANT
+  PROPRIETAIRE
+  ADMIN
+}
+
+enum StatutAbonnement {
+  ACTIF
+  EXPIRE
+  EN_ATTENTE
+  ECHEC
+}
+
+enum OperateurPaiement {
+  MOMO
+  CCASH
+  MOOV_MONEY
+}
+
+enum TypeAnnonce {
+  LOGEMENT_DISPONIBLE
+  PLACE_EN_COLOCATION
+}
+
+enum StatutAnnonce {
+  ACTIVE
+  INACTIVE
+  MODEREE
+  SUPPRIMEE
+}
+
+enum StatutColocation {
+  ACTIVE
+  EN_ATTENTE
+  FERMEE
+}
+
+enum StatutColocataire {
+  ACTIF
+  EN_ATTENTE
+  PARTI
+}
+
+// ─── Modèles ──────────────────────────────────────────────────────────────────
+
+model Utilisateur {
+  id               String           @id @default(uuid())
+  nom              String
+  prenom           String
+  email            String           @unique
+  telephone        String?
+  motDePasse       String
+  ville            String?
+  universite       String?
+  filiere          String?
+  niveau           String?
+  typeCompte       TypeCompte       @default(ETUDIANT)
+  photo            String?
+  emailVerifie     Boolean          @default(false)
+  tokenVerifEmail  String?
+  actif            Boolean          @default(true)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  annonces         Annonce[]
+  abonnements      Abonnement[]
+  messagesEnvoyes  Message[]        @relation("Expediteur")
+  messagesRecus    Message[]        @relation("Destinataire")
+  colocataires     Colocataire[]
+
+  @@map("utilisateurs")
+}
+
+model Annonce {
+  id              String         @id @default(uuid())
+  proprietaireId  String
+  proprietaire    Utilisateur    @relation(fields: [proprietaireId], references: [id])
+  type            TypeAnnonce
+  adresse         String?
+  quartier        String?
+  ville           String
+  loyerTotal      Int
+  nbPlaces        Int
+  nbColocataires  Int?
+  caution         Int?
+  description     String?
+  equipements     String[]
+  photos          String[]
+  statut          StatutAnnonce  @default(ACTIVE)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  colocation      Colocation?
+
+  @@map("annonces")
+}
+
+model Colocation {
+  id          String           @id @default(uuid())
+  annonceId   String?          @unique
+  annonce     Annonce?         @relation(fields: [annonceId], references: [id])
+  nom         String
+  adresse     String?
+  ville       String
+  loyerTotal  Int
+  nbPlaces    Int
+  description String?
+  statut      StatutColocation @default(EN_ATTENTE)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  colocataires Colocataire[]
+
+  @@map("colocations")
+}
+
+model Colocataire {
+  id            String            @id @default(uuid())
+  utilisateurId String
+  utilisateur   Utilisateur       @relation(fields: [utilisateurId], references: [id])
+  colocId       String
+  colocation    Colocation        @relation(fields: [colocId], references: [id])
+  partLoyer     Int?
+  statut        StatutColocataire @default(EN_ATTENTE)
+  // FIX : faute de frappe corrigée "loierConfirme" → "loyerConfirme"
+  loyerConfirme Boolean          @default(false)
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  @@unique([utilisateurId, colocId])
+  @@map("colocataires")
+}
+
+model Abonnement {
+  id            String            @id @default(uuid())
+  utilisateurId String
+  utilisateur   Utilisateur       @relation(fields: [utilisateurId], references: [id])
+  operateur     OperateurPaiement
+  montant       Int               @default(300)
+  referenceOp   String?
+  statut        StatutAbonnement  @default(EN_ATTENTE)
+  periodeDebut  DateTime?
+  periodeFin    DateTime?
+  datePaiement  DateTime?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  @@map("abonnements")
+}
+
+model Message {
+  id             String      @id @default(uuid())
+  expediteurId   String
+  expediteur     Utilisateur @relation("Expediteur", fields: [expediteurId], references: [id])
+  destinataireId String
+  destinataire   Utilisateur @relation("Destinataire", fields: [destinataireId], references: [id])
+  contenu        String
+  lu             Boolean     @default(false)
+  createdAt      DateTime    @default(now())
+
+  @@map("messages")
+}

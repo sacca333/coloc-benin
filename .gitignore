@@ -1,0 +1,35 @@
+# Environnement
+.env
+.env.local
+.env.*.local
+
+# Node
+node_modules/
+dist/
+build/
+.next/
+
+# Uploads utilisateurs
+backend/uploads/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Docker volumes (données locales)
+postgres_data/
+
+# TypeScript
+*.tsbuildinfo
+
+# Prisma
+backend/prisma/*.db
