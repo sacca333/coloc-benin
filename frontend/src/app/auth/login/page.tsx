@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Link from 'next/link';
@@ -18,7 +18,7 @@ export default function LoginPage() {
     try {
       const { data } = await authApi.login(email, motDePasse);
       login(data.token, data.utilisateur, data.abonnementActif);
-      router.push(data.abonnementActif ? '/dashboard' : '/abonnement');
+      router.push('/dashboard');
     } catch (err: any) {
       setServerError(err.response?.data?.error || 'Identifiants invalides');
     }
@@ -28,8 +28,8 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50">
       <div className="card max-w-sm w-full">
         <div className="mb-6 text-center">
-          <span className="text-2xl font-bold text-primary-600">ColocBénin</span>
-          <p className="text-sm text-gray-500 mt-1">Connectez-vous à votre compte</p>
+          <span className="text-2xl font-bold text-primary-600">ColocBÃ©nin</span>
+          <p className="text-sm text-gray-500 mt-1">Connectez-vous Ã  votre compte</p>
         </div>
 
         {serverError && (

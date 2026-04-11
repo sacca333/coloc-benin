@@ -34,7 +34,7 @@ const NAV_ITEMS = [
     isSpecial: true,
   },
   {
-    href: '/dashboard',
+    href: '/mes-annonces',
     label: 'Mes annonces',
     icon: (active: boolean) => (
       <svg viewBox="0 0 24 24" fill={active ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth={active ? 0 : 1.8} className="w-6 h-6">
