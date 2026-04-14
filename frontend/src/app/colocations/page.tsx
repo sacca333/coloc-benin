@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { colocationsApi } from '../../lib/api';
@@ -30,16 +30,16 @@ export default function ColocationsPage() {
             <h1 className="text-xl font-semibold">Mes colocations</h1>
             <p className="text-sm text-gray-500 mt-0.5">{colocations.length} colocation{colocations.length > 1 ? 's' : ''}</p>
           </div>
-          <Link href="/colocations/creer" className="btn-primary text-sm">
-            Créer une colocation
+          <Link href="/annonces/creer" className="btn-primary text-sm">
+            Publier une annonce
           </Link>
         </div>
 
         {colocations.length === 0 ? (
           <div className="card text-center py-16">
-            <p className="text-gray-400 mb-4">Vous n'êtes dans aucune colocation pour le moment.</p>
+            <p className="text-gray-400 mb-4">Vous n etes dans aucune colocation pour le moment.</p>
             <div className="flex gap-3 justify-center">
-              <Link href="/colocations/creer" className="btn-primary text-sm">Créer une colocation</Link>
+              <Link href="/annonces/creer" className="btn-primary text-sm">Publier une annonce</Link>
               <Link href="/annonces" className="btn-outline text-sm">Voir les annonces</Link>
             </div>
           </div>
@@ -56,11 +56,10 @@ export default function ColocationsPage() {
                     c.statut === 'ACTIVE' ? 'badge-actif' :
                     c.statut === 'FERMEE' ? 'badge-expire' : 'badge-attente'
                   )}>
-                    {c.statut === 'ACTIVE' ? 'Active' : c.statut === 'FERMEE' ? 'Fermée' : 'En attente'}
+                    {c.statut === 'ACTIVE' ? 'Active' : c.statut === 'FERMEE' ? 'Fermee' : 'En attente'}
                   </span>
                 </div>
 
-                {/* Membres */}
                 <div className="flex items-center gap-1 mb-3">
                   {c.colocataires.filter(m => m.statut === 'ACTIF').slice(0, 4).map(m => (
                     <div key={m.id} className="w-7 h-7 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center text-xs font-medium border-2 border-white -ml-1 first:ml-0">
@@ -79,7 +78,7 @@ export default function ColocationsPage() {
                   </div>
                   <div className="text-right">
                     <p className="text-xs text-gray-400">Ma part</p>
-                    <p className="font-medium text-sm text-primary-600">{c.maPartLoyer?.toLocaleString() || '—'} FCFA</p>
+                    <p className="font-medium text-sm text-primary-600">{c.maPartLoyer?.toLocaleString() || '-'} FCFA</p>
                   </div>
                 </div>
               </Link>

@@ -1,4 +1,4 @@
-// schema.prisma — ColocBénin
+﻿// schema.prisma â€” ColocBÃ©nin
 
 generator client {
   provider = "prisma-client-js"
@@ -9,7 +9,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// ─── Enums ────────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Enums â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 enum TypeCompte {
   ETUDIANT
@@ -54,7 +54,7 @@ enum StatutColocataire {
   PARTI
 }
 
-// ─── Modèles ──────────────────────────────────────────────────────────────────
+// â”€â”€â”€ ModÃ¨les â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 model Utilisateur {
   id               String           @id @default(uuid())
@@ -149,7 +149,7 @@ model Abonnement {
   utilisateur   Utilisateur       @relation(fields: [utilisateurId], references: [id])
   operateur     OperateurPaiement
   montant       Int               @default(300)
-  referenceOp   String?           // référence transaction opérateur
+  referenceOp   String?           // rÃ©fÃ©rence transaction opÃ©rateur
   statut        StatutAbonnement  @default(EN_ATTENTE)
   periodeDebut  DateTime?
   periodeFin    DateTime?
@@ -172,3 +172,4 @@ model Message {
 
   @@map("messages")
 }
+

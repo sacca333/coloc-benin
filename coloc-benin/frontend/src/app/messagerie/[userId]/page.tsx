@@ -115,6 +115,8 @@ export default function ConversationPage() {
             className="btn-primary px-4 text-sm self-end"
           >
             Envoyer
+
+            console.log('Envoi media:', mediaPreview?.file.name, 'vers userId:', userId);
           </button>
         </div>
       </div>
