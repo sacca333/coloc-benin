@@ -95,8 +95,8 @@ export function Navbar() {
       <aside className="hidden md:flex flex-col fixed left-0 top-0 h-full w-60 bg-gray-950 z-40 py-6">
         <div className="px-5 mb-8">
           <Link href="/dashboard" className="flex items-center gap-2">
-            <span className="w-8 h-8 rounded-xl bg-violet-600 flex items-center justify-center text-white font-bold text-sm">CB</span>
-            <span className="font-bold text-white text-lg">ColocBenin</span>
+            <img src="/logo.png" alt="logo" className="w-8 h-8 rounded-xl object-cover" />
+            <span className="font-bold text-lg"><span className="text-green-400">Coloc</span><span className="text-yellow-400">Benin</span></span>
           </Link>
         </div>
 
@@ -168,7 +168,7 @@ export function Navbar() {
           <span className="block w-5 h-0.5 bg-gray-400" />
           <span className="block w-5 h-0.5 bg-gray-400" />
         </button>
-        <Link href="/dashboard" className="font-bold text-white text-lg">ColocBenin</Link>
+        <Link href="/dashboard" className="font-bold text-lg"><span className="text-green-400">Coloc</span><span className="text-yellow-400">Benin</span></Link>
         <button onClick={() => setProfileOpen(!profileOpen)} className="w-9 h-9 rounded-full overflow-hidden border-2 border-gray-700">
           {userPhoto
             ? <img src={userPhoto} alt="" className="w-full h-full object-cover" />
@@ -185,7 +185,7 @@ export function Navbar() {
           <div className="absolute inset-0 bg-black/60" onClick={() => setMobileOpen(false)} />
           <div className="relative w-64 bg-gray-950 h-full flex flex-col py-6">
             <div className="px-5 mb-8 flex items-center justify-between">
-              <span className="font-bold text-white text-lg">ColocBenin</span>
+              <span className="font-bold text-lg"><span className="text-green-400">Coloc</span><span className="text-yellow-400">Benin</span></span>
               <button onClick={() => setMobileOpen(false)} className="text-gray-400 hover:text-white">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-5 h-5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
