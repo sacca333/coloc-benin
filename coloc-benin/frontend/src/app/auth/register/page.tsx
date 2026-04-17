@@ -8,15 +8,15 @@ import { useRouter } from 'next/navigation';
 import { authApi } from '../../../lib/api';
 
 const schema = z.object({
-  nom:        z.string().min(2, 'Nom requis'),
-  prenom:     z.string().min(2, 'Prénom requis'),
-  email:      z.string().email('Email invalide'),
+  nom: z.string().min(2, 'Nom requis'),
+  prenom: z.string().min(2, 'Prénom requis'),
+  email: z.string().email('Email invalide'),
   motDePasse: z.string().min(8, 'Minimum 8 caractères'),
-  telephone:  z.string().optional(),
-  ville:      z.string().optional(),
+  telephone: z.string().optional(),
+  ville: z.string().optional(),
   universite: z.string().optional(),
-  filiere:    z.string().optional(),
-  niveau:     z.enum(['Licence 1', 'Licence 2', 'Licence 3', 'Master 1', 'Master 2', 'Doctorat', 'BTS', 'Autre']).optional(),
+  filiere: z.string().optional(),
+  niveau: z.enum(['Licence 1', 'Licence 2', 'Licence 3', 'Master 1', 'Master 2', 'Doctorat', 'BTS', 'Autre']).optional(),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -52,7 +52,7 @@ export default function RegisterPage() {
             </svg>
           </div>
           <h2 className="text-lg font-semibold mb-2 text-center">Compte créé !</h2>
-          
+
           <div className="bg-blue-50 border border-blue-100 rounded-lg p-4 mb-4">
             <p className="text-sm text-gray-700 mb-3">
               <strong>Vérification requise :</strong>

@@ -79,7 +79,7 @@ export function Navbar() {
     return (
       <nav className="sticky top-0 z-40 bg-white border-b border-gray-100 shadow-sm">
         <div className="max-w-6xl mx-auto px-4 flex items-center justify-between h-14">
-          <Link href="/" className="font-bold text-primary-600 text-lg">ColocBenin</Link>
+          <Link href="/" className="font-bold text-sky-600 text-lg">ColocBénin</Link>
           <div className="flex items-center gap-3">
             <Link href="/auth/login" className="text-sm text-gray-600 hover:text-gray-900">Connexion</Link>
             <Link href="/auth/register" className="btn-primary text-sm">S inscrire</Link>
@@ -92,11 +92,11 @@ export function Navbar() {
   return (
     <>
       {/* ── SIDEBAR DESKTOP ──────────────────────────────────── */}
-      <aside className="hidden md:flex flex-col fixed left-0 top-0 h-full w-60 bg-gray-950 z-40 py-6">
+      <aside className="hidden md:flex flex-col fixed left-0 top-0 h-full w-60 bg-sky-900 z-40 py-6">
         <div className="px-5 mb-8">
           <Link href="/dashboard" className="flex items-center gap-2">
             <img src="/logo.png" alt="logo" className="w-8 h-8 rounded-xl object-cover" />
-            <span className="font-bold text-lg"><span className="text-green-400">Coloc</span><span className="text-yellow-400">Benin</span></span>
+            <span className="font-bold text-lg"><span className="text-green-400">Coloc</span><span className="text-yellow-400">Bénin</span></span>
           </Link>
         </div>
 
@@ -108,8 +108,8 @@ export function Navbar() {
                 className={clsx(
                   'flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200',
                   isActive
-                    ? 'bg-violet-600 text-white shadow-lg shadow-violet-900/30'
-                    : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+                    ? 'bg-blue-700 text-white shadow-lg shadow-blue-900/30'
+                    : 'text-gray-400 hover:bg-sky-700 hover:text-white'
                 )}>
                 {icon}
                 {label}
@@ -118,7 +118,7 @@ export function Navbar() {
           })}
         </nav>
 
-        <div className="px-3 mt-4 border-t border-gray-800 pt-4">
+        <div className="px-3 mt-4 border-t border-sky-800 pt-4">
           {!abonnementActif && (
             <Link href="/abonnement" className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500/10 text-amber-400 text-xs font-medium mb-3 hover:bg-amber-500/20 transition-colors">
               <span>⚡</span> Activer l abonnement
@@ -126,10 +126,10 @@ export function Navbar() {
           )}
           <div className="relative" ref={profileRef}>
             <button onClick={() => setProfileOpen(!profileOpen)}
-              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-800 transition-colors">
+              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-sky-700 transition-colors">
               {userPhoto
                 ? <img src={userPhoto} alt="" className="w-8 h-8 rounded-full object-cover flex-shrink-0" />
-                : <span className="w-8 h-8 rounded-full bg-violet-600 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">
+                : <span className="w-8 h-8 rounded-full bg-blue-700 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">
                     {user.prenom[0]}{user.nom[0]}
                   </span>
               }
@@ -143,15 +143,15 @@ export function Navbar() {
             </button>
 
             {profileOpen && (
-              <div className="absolute bottom-full left-0 right-0 mb-2 bg-gray-900 border border-gray-700 rounded-2xl py-2 shadow-xl z-50">
-                <Link href="/profil" onClick={() => setProfileOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
+              <div className="absolute bottom-full left-0 right-0 mb-2 bg-sky-800 border border-sky-700 rounded-2xl py-2 shadow-xl z-50">
+                <Link href="/profil" onClick={() => setProfileOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:bg-sky-700 hover:text-white transition-colors">
                   <span>👤</span> Mon profil
                 </Link>
-                <Link href="/abonnement" onClick={() => setProfileOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
+                <Link href="/abonnement" onClick={() => setProfileOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:bg-sky-700 hover:text-white transition-colors">
                   <span>💳</span> Mon abonnement
                 </Link>
-                <div className="border-t border-gray-700 mt-1 pt-1">
-                  <button onClick={() => { logout(); setProfileOpen(false); }} className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-400 hover:bg-gray-800 transition-colors">
+                <div className="border-t border-sky-700 mt-1 pt-1">
+                  <button onClick={() => { logout(); setProfileOpen(false); }} className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-400 hover:bg-sky-700 transition-colors">
                     <span>🚪</span> Deconnexion
                   </button>
                 </div>
@@ -162,17 +162,17 @@ export function Navbar() {
       </aside>
 
       {/* ── TOPBAR MOBILE ────────────────────────────────────── */}
-      <nav className="md:hidden sticky top-0 z-40 bg-gray-950 border-b border-gray-800 flex items-center justify-between px-4 h-14">
-        <button onClick={() => setMobileOpen(true)} className="w-9 h-9 flex flex-col items-center justify-center gap-1.5 rounded-lg hover:bg-gray-800 transition-colors">
+      <nav className="md:hidden sticky top-0 z-40 bg-sky-900 border-b border-sky-800 flex items-center justify-between px-4 h-14">
+        <button onClick={() => setMobileOpen(true)} className="w-9 h-9 flex flex-col items-center justify-center gap-1.5 rounded-lg hover:bg-sky-700 transition-colors">
           <span className="block w-5 h-0.5 bg-gray-400" />
           <span className="block w-5 h-0.5 bg-gray-400" />
           <span className="block w-5 h-0.5 bg-gray-400" />
         </button>
-        <Link href="/dashboard" className="font-bold text-lg"><span className="text-green-400">Coloc</span><span className="text-yellow-400">Benin</span></Link>
-        <button onClick={() => setProfileOpen(!profileOpen)} className="w-9 h-9 rounded-full overflow-hidden border-2 border-gray-700">
+        <Link href="/dashboard" className="font-bold text-lg"><span className="text-green-400">Coloc</span><span className="text-yellow-400">Bénin</span></Link>
+        <button onClick={() => setProfileOpen(!profileOpen)} className="w-9 h-9 rounded-full overflow-hidden border-2 border-sky-700">
           {userPhoto
             ? <img src={userPhoto} alt="" className="w-full h-full object-cover" />
-            : <span className="w-full h-full bg-violet-600 text-white flex items-center justify-center text-xs font-bold">
+            : <span className="w-full h-full bg-blue-700 text-white flex items-center justify-center text-xs font-bold">
                 {user.prenom[0]}{user.nom[0]}
               </span>
           }
@@ -183,9 +183,9 @@ export function Navbar() {
       {mobileOpen && (
         <div className="md:hidden fixed inset-0 z-50 flex">
           <div className="absolute inset-0 bg-black/60" onClick={() => setMobileOpen(false)} />
-          <div className="relative w-64 bg-gray-950 h-full flex flex-col py-6">
+          <div className="relative w-64 bg-sky-900 h-full flex flex-col py-6">
             <div className="px-5 mb-8 flex items-center justify-between">
-              <span className="font-bold text-lg"><span className="text-green-400">Coloc</span><span className="text-yellow-400">Benin</span></span>
+              <span className="font-bold text-lg"><span className="text-green-400">Coloc</span><span className="text-yellow-400">Bénin</span></span>
               <button onClick={() => setMobileOpen(false)} className="text-gray-400 hover:text-white">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-5 h-5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -198,7 +198,7 @@ export function Navbar() {
                 return (
                   <Link key={href} href={href} onClick={() => setMobileOpen(false)}
                     className={clsx('flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all',
-                      isActive ? 'bg-violet-600 text-white' : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+                      isActive ? 'bg-blue-700 text-white' : 'text-gray-400 hover:bg-sky-700 hover:text-white'
                     )}>
                     {icon}
                     {label}
@@ -206,11 +206,11 @@ export function Navbar() {
                 );
               })}
             </nav>
-            <div className="px-3 border-t border-gray-800 pt-4">
-              <Link href="/profil" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800 rounded-xl">
+            <div className="px-3 border-t border-sky-800 pt-4">
+              <Link href="/profil" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:bg-sky-700 rounded-xl">
                 <span>👤</span> Mon profil
               </Link>
-              <button onClick={() => { logout(); setMobileOpen(false); }} className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-400 hover:bg-gray-800 rounded-xl">
+              <button onClick={() => { logout(); setMobileOpen(false); }} className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-400 hover:bg-sky-700 rounded-xl">
                 <span>🚪</span> Deconnexion
               </button>
             </div>
@@ -220,3 +220,4 @@ export function Navbar() {
     </>
   );
 }
+

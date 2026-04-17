@@ -181,3 +181,5 @@ function AnnonceCard({ annonce }: { annonce: Annonce }) {
     </Link>
   );
 }
+
+

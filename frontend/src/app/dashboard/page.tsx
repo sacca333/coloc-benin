@@ -50,7 +50,7 @@ export default function DashboardPage() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Bienvenue, {user.prenom} 👋</h1>
-          <p className="text-sm text-gray-500 mt-1">{user.universite || 'Etudiant'} · {user.ville || 'Benin'}</p>
+          <p className="text-sm text-gray-500 mt-1">{user.universite || 'Etudiant'} · {user.ville || 'Bénin'}</p>
         </div>
 
         {/* Abonnement Alert */}
@@ -182,3 +182,5 @@ export default function DashboardPage() {
     </>
   );
 }
+
+

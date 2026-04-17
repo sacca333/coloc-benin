@@ -19,11 +19,8 @@ export default function HomePage() {
             backgroundPosition: 'center',
           }}
         >
-          {/* Overlay sombre pour lisibilite */}
-          <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(123,97,255,0.75) 0%, rgba(0,0,0,0.55) 100%)' }} />
-
-          {/* Contenu */}
-          <div className="relative z-10 max-w-3xl mx-auto">
+          <div className="absolute inset-0" style={{ background: 'rgba(0,40,80,0.65)' }} />
+          <div className="relative z-10 max-w-3xl mx-auto w-full">
             <span className="inline-block bg-white/20 text-white text-xs font-semibold px-4 py-1.5 rounded-full mb-4 backdrop-blur-sm border border-white/30">
               Plateforme N1 de colocation etudiante au Benin
             </span>
@@ -35,7 +32,7 @@ export default function HomePage() {
               La plateforme dediee aux etudiants beninois pour trouver des colocataires, gerer les loyers et simplifier la vie en communaute.
             </p>
             <div className="mt-8 flex items-center justify-center gap-4 flex-wrap">
-              <Link href="/annonces" className="px-8 py-3 text-base font-semibold rounded-2xl text-violet-700 bg-white hover:bg-yellow-300 transition-all duration-200 shadow-lg hover:shadow-xl active:scale-95">
+              <Link href="/annonces" className="px-8 py-3 text-base font-semibold rounded-2xl text-blue-900 bg-white hover:bg-yellow-300 transition-all duration-200 shadow-lg active:scale-95">
                 Voir les annonces
               </Link>
               {user ? (
@@ -69,25 +66,24 @@ export default function HomePage() {
         </section>
 
         {/* CTA */}
-        <section className="bg-primary-50 border-t border-primary-100">
+        <section className="bg-blue-50 border-t border-blue-100">
           <div className="max-w-2xl mx-auto px-4 py-12 text-center">
             {user ? (
               <>
-                <h2 className="text-xl font-semibold text-primary-800 mb-2">Bienvenue, {user.prenom} !</h2>
-                <p className="text-sm text-primary-600 mb-6">Gerez vos colocations et annonces depuis votre tableau de bord.</p>
-                <Link href="/dashboard" className="btn-primary px-8 py-3 text-base inline-block">Aller au tableau de bord</Link>
+                <h2 className="text-xl font-semibold text-blue-800 mb-2">Bienvenue, {user.prenom} !</h2>
+                <p className="text-sm text-blue-600 mb-6">Gerez vos colocations et annonces depuis votre tableau de bord.</p>
+                <Link href="/dashboard" className="px-8 py-3 text-base font-semibold rounded-2xl text-white bg-blue-700 hover:bg-blue-800 transition-all inline-block">Aller au tableau de bord</Link>
               </>
             ) : (
               <>
-                <h2 className="text-xl font-semibold text-primary-800 mb-2">Pret a trouver votre coloc ?</h2>
-                <p className="text-sm text-primary-600 mb-6">Rejoignez des centaines d etudiants beninois deja inscrits.</p>
-                <Link href="/auth/register" className="btn-primary px-8 py-3 text-base inline-block">S inscrire gratuitement</Link>
+                <h2 className="text-xl font-semibold text-blue-800 mb-2">Pret a trouver votre coloc ?</h2>
+                <p className="text-sm text-blue-600 mb-6">Rejoignez des centaines d etudiants beninois deja inscrits.</p>
+                <Link href="/auth/register" className="px-8 py-3 text-base font-semibold rounded-2xl text-white bg-blue-700 hover:bg-blue-800 transition-all inline-block">S inscrire gratuitement</Link>
               </>
             )}
           </div>
         </section>
       </main>
-
       <footer className="border-t border-gray-100 py-6 text-center text-xs text-gray-400">
         {new Date().getFullYear()} ColocBenin - Tous droits reserves
       </footer>
