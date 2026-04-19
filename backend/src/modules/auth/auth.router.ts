@@ -1,7 +1,6 @@
-// ── auth.router.ts ────────────────────────────────────────────────────────────
-import { Router } from 'express';
+﻿import { Router } from 'express';
 import { body } from 'express-validator';
-import { register, login, verifyEmail, getMe } from './auth.controller';
+import { register, login, verifyEmail, getMe, forgotPassword, resetPassword } from './auth.controller';
 import { authenticate } from '../../middlewares/auth.middleware';
 import { validate } from '../../middlewares/validate.middleware';
 
@@ -11,10 +10,9 @@ authRouter.post(
   '/register',
   [
     body('nom').trim().notEmpty().withMessage('Nom requis'),
-    body('prenom').trim().notEmpty().withMessage('Prénom requis'),
+    body('prenom').trim().notEmpty().withMessage('Prenom requis'),
     body('email').isEmail().withMessage('Email invalide'),
-    body('motDePasse').isLength({ min: 8 }).withMessage('Mot de passe min 8 caractères'),
-    body('telephone').optional({ values: 'falsy' }).isMobilePhone('any'),
+    body('motDePasse').isLength({ min: 8 }).withMessage('Mot de passe min 8 caracteres'),
   ],
   validate,
   register
@@ -32,3 +30,5 @@ authRouter.post(
 
 authRouter.get('/verify-email/:token', verifyEmail);
 authRouter.get('/me', authenticate, getMe);
+authRouter.post('/forgot-password', [body('email').isEmail().withMessage('Email invalide')], validate, forgotPassword);
+authRouter.post('/reset-password/:token', [body('nouveauMotDePasse').isLength({ min: 8 })], validate, resetPassword);

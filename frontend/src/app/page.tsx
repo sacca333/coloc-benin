@@ -1,6 +1,7 @@
 ﻿'use client';
 import Link from 'next/link';
 import { Navbar } from '../components/layout/Navbar';
+import { Footer } from '../components/layout/Footer';
 import { useAuth } from '../hooks/useAuth';
 
 export default function HomePage() {
@@ -10,14 +11,9 @@ export default function HomePage() {
     <>
       <Navbar />
       <main>
-        {/* Hero avec image de fond */}
         <section
           className="relative min-h-[520px] flex items-center justify-center text-center px-4 py-20"
-          style={{
-            backgroundImage: "url('/hero-background.png')",
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
+          style={{ backgroundImage: "url('/hero-background.png')", backgroundSize: 'cover', backgroundPosition: 'center' }}
         >
           <div className="absolute inset-0" style={{ background: 'rgba(0,40,80,0.65)' }} />
           <div className="relative z-10 max-w-3xl mx-auto w-full">
@@ -48,7 +44,6 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Features */}
         <section className="max-w-5xl mx-auto px-4 py-16">
           <div className="grid md:grid-cols-3 gap-6">
             {[
@@ -65,7 +60,6 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* CTA */}
         <section className="bg-blue-50 border-t border-blue-100">
           <div className="max-w-2xl mx-auto px-4 py-12 text-center">
             {user ? (
@@ -84,9 +78,7 @@ export default function HomePage() {
           </div>
         </section>
       </main>
-      <footer className="border-t border-gray-100 py-6 text-center text-xs text-gray-400">
-        {new Date().getFullYear()} ColocBenin - Tous droits reserves
-      </footer>
+      <Footer />
     </>
   );
 }
