@@ -49,7 +49,7 @@ export default function LoginPage() {
       {/* Navbar */}
       <nav className="bg-sky-800 h-14 flex items-center px-6">
         <Link href="/" className="flex items-center gap-2">
-          <img src="/logo.png" alt="logo" className="w-8 h-8 rounded-xl object-cover" />
+          <img src="/logo.png" alt="logo" className="w-10 h-12 rounded-xl object-cover" />
           <span className="font-bold text-lg">
             <span className="text-green-400">Coloc</span>
             <span className="text-yellow-400">Bénin</span>

@@ -95,15 +95,15 @@ export default function HomePage() {
         <section className="w-full bg-white py-10 border-y border-gray-100">
           <div className="max-w-4xl mx-auto px-4 grid grid-cols-3 gap-6 text-center bg-gray-500/5 rounded-lg py-8">
             <div>
-              <p className="text-3xl font-bold text-blue-700">500+</p>
+              <p className="text-3xl font-bold text-blue-500">500+</p>
               <p className="text-sm text-gray-500 mt-1">Étudiants inscrits</p>
             </div>
             <div>
-              <p className="text-3xl font-bold text-blue-700">30+</p>
+              <p className="text-3xl font-bold text-blue-500">30+</p>
               <p className="text-sm text-gray-500 mt-1 ">Villes couvertes</p>
             </div>
             <div>
-              <p className="text-3xl font-bold text-blue-700">300 FCFA</p>
+              <p className="text-3xl font-bold text-blue-500">300 FCFA</p>
               <p className="text-sm text-gray-500 mt-1">Par mois seulement</p>
             </div>
           </div>

@@ -77,12 +77,17 @@ export function Navbar() {
   const isPublicPage = !user || pathname.startsWith('/auth');
   if (isPublicPage) {
     return (
-      <nav className="sticky top-0 z-40 bg-white border-b border-gray-100 shadow-sm">
+      <nav className="sticky top-0 z-40 bg-sky-900 border-b border-gray-100 shadow-sm">
         <div className="max-w-6xl mx-auto px-4 flex items-center justify-between h-14">
-          <Link href="/" className="font-bold text-sky-600 text-lg">ColocBénin</Link>
-          <div className="flex items-center gap-3">
-            <Link href="/auth/login" className="text-sm text-gray-600 hover:text-gray-900">Connexion</Link>
-            <Link href="/auth/register" className="btn-primary text-sm">S inscrire</Link>
+          <Link href="/" className=" flex items-center gap-2 font-bold text-sky-600 text-lg">  <img src="/logo.png" alt="logo" className="w-10 h-12 rounded-xl object-cover" />
+            <div><span className="text-green-400 ">Coloc</span><span className="text-yellow-400">Bénin</span></div></Link>
+          <div className="flex items-center gap-4">
+            <Link href="/auth/login" className="text-sm bg-white text-gray-600 hover:bg-gray-400 py-1 px-3 rounded-md transition-colors">
+              Connexion
+            </Link>
+            <Link href="/auth/register" className="text-sm bg-blue-600 text-white hover:bg-blue-700 py-1 px-3 rounded-md transition-colors">
+              S'inscrire
+            </Link>
           </div>
         </div>
       </nav>
@@ -121,7 +126,7 @@ export function Navbar() {
         <div className="px-3 mt-4 border-t border-sky-800 pt-4">
           {!abonnementActif && (
             <Link href="/abonnement" className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500/10 text-amber-400 text-xs font-medium mb-3 hover:bg-amber-500/20 transition-colors">
-              <span>⚡</span> Activer l abonnement
+              <span>⚡</span> Activer l'abonnement
             </Link>
           )}
           <div className="relative" ref={profileRef}>
@@ -130,8 +135,8 @@ export function Navbar() {
               {userPhoto
                 ? <img src={userPhoto} alt="" className="w-8 h-8 rounded-full object-cover flex-shrink-0" />
                 : <span className="w-8 h-8 rounded-full bg-blue-700 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">
-                    {user.prenom[0]}{user.nom[0]}
-                  </span>
+                  {user.prenom[0]}{user.nom[0]}
+                </span>
               }
               <div className="text-left min-w-0 flex-1">
                 <p className="text-sm font-medium text-white truncate">{user.prenom} {user.nom}</p>
@@ -173,8 +178,8 @@ export function Navbar() {
           {userPhoto
             ? <img src={userPhoto} alt="" className="w-full h-full object-cover" />
             : <span className="w-full h-full bg-blue-700 text-white flex items-center justify-center text-xs font-bold">
-                {user.prenom[0]}{user.nom[0]}
-              </span>
+              {user.prenom[0]}{user.nom[0]}
+            </span>
           }
         </button>
       </nav>

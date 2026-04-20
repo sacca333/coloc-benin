@@ -8,15 +8,15 @@ import { useRouter } from 'next/navigation';
 import { authApi } from '../../../lib/api';
 
 const schema = z.object({
-  nom:        z.string().min(2, 'Nom requis'),
-  prenom:     z.string().min(2, 'Prenom requis'),
-  email:      z.string().email('Email invalide'),
+  nom: z.string().min(2, 'Nom requis'),
+  prenom: z.string().min(2, 'Prenom requis'),
+  email: z.string().email('Email invalide'),
   motDePasse: z.string().min(8, 'Minimum 8 caracteres'),
-  telephone:  z.string().optional(),
-  ville:      z.string().optional(),
+  telephone: z.string().optional(),
+  ville: z.string().optional(),
   universite: z.string().optional(),
-  filiere:    z.string().optional(),
-  niveau:     z.enum(['Licence 1', 'Licence 2', 'Licence 3', 'Master 1', 'Master 2', 'Doctorat', 'BTS', 'Autre']).optional(),
+  filiere: z.string().optional(),
+  niveau: z.enum(['Licence 1', 'Licence 2', 'Licence 3', 'Master 1', 'Master 2', 'Doctorat', 'BTS', 'Autre']).optional(),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -46,7 +46,7 @@ export default function RegisterPage() {
       <div className="min-h-screen flex flex-col bg-gray-50">
         <nav className="bg-sky-800 h-14 flex items-center px-6">
           <Link href="/" className="flex items-center gap-2">
-            <img src="/logo.png" alt="logo" className="w-8 h-8 rounded-xl object-cover" />
+            <img src="/logo.png" alt="logo" className="w-10 h-12 rounded-xl object-cover" />
             <span className="font-bold text-lg"><span className="text-green-400">Coloc</span><span className="text-yellow-400">Bénin</span></span>
           </Link>
         </nav>
