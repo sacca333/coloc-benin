@@ -77,3 +77,28 @@ export const messagerieApi = {
   envoyer: (destinataireId: string, contenu: string) =>
     api.post(`/messagerie/${destinataireId}`, { contenu }),
 };
+
+// Demandes colocation
+export const demandesColApi = {
+  envoyer: (destinataireId: string, message?: string) => api.post('/demandes-colocation', { destinataireId, message }),
+  accepter: (id: string) => api.post(`/demandes-colocation/${id}/accepter`),
+  rejeter: (id: string) => api.post(`/demandes-colocation/${id}/rejeter`),
+  recues: () => api.get('/demandes-colocation/recues'),
+  envoyees: () => api.get('/demandes-colocation/envoyees'),
+};
+
+// Notifications
+export const notificationsApi = {
+  toutes: () => api.get('/notifications'),
+  nonLuesCount: () => api.get('/notifications/non-lues/count'),
+  marquerLu: (id: string) => api.patch(`/notifications/${id}/lu`),
+  toutMarquerLu: () => api.patch('/notifications/tout-lu'),
+};
+
+// Blocages
+export const blocagesApi = {
+  bloquer: (bloqueId: string) => api.post('/blocages', { bloqueId }),
+  debloquer: (bloqueId: string) => api.delete(`/blocages/${bloqueId}`),
+  liste: () => api.get('/blocages'),
+  verifie: (userId: string) => api.get(`/blocages/verifie/${userId}`),
+};

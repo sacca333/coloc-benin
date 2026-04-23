@@ -106,3 +106,34 @@ export interface FiltresColocataire {
   budgetMax?: number;
   niveau?: string;
 }
+
+export interface DemandeColocation {
+  id: string;
+  expediteurId: string;
+  destinataireId: string;
+  statut: 'EN_ATTENTE' | 'ACCEPTEE' | 'REJETEE' | 'ANNULEE';
+  colocationId?: string;
+  message?: string;
+  createdAt: string;
+  expediteur: { id: string; prenom: string; nom: string; photo?: string };
+  destinataire: { id: string; prenom: string; nom: string; photo?: string };
+}
+
+export interface Notification {
+  id: string;
+  userId: string;
+  type: 'DEMANDE_COLOCATION' | 'COLOCATION_ACCEPTEE' | 'COLOCATION_REJETEE' | 'NOUVELLE_ANNONCE' | 'BLOCAGE' | 'DEBLOCAGE';
+  titre: string;
+  message: string;
+  lu: boolean;
+  data?: Record<string, any>;
+  createdAt: string;
+}
+
+export interface Blocage {
+  id: string;
+  bloqueurId: string;
+  bloqueId: string;
+  createdAt: string;
+  bloque: { id: string; prenom: string; nom: string; photo?: string };
+}

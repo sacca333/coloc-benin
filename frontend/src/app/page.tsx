@@ -155,7 +155,7 @@ export default function HomePage() {
             <img
               src={SLIDES[current].image}
               alt={SLIDES[current].title}
-              className="w-full h-[60vh] object-cover transition-all duration-500"
+              className="w-full h-[80vh] object-cover transition-all duration-500"
             />
             <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-center px-4 sm:px-6">
               <span className="bg-white/20 text-white text-xs font-semibold px-3 py-1 rounded-full mb-2 sm:mb-3 border border-white/30">
