@@ -1,8 +1,6 @@
 ﻿import { Response } from 'express';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../../config/database';
 import { AuthRequest } from '../../middlewares/auth.middleware';
-
-const prisma = new PrismaClient();
 
 const abonnementActif = async (userId: string) => {
   const abo = await prisma.abonnement.findFirst({

@@ -1,8 +1,6 @@
 ﻿import { Response } from 'express';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../../config/database';
 import { AuthRequest } from '../../middlewares/auth.middleware';
-
-const prisma = new PrismaClient();
 
 export const toutesNotifications = async (req: AuthRequest, res: Response) => {
   try {

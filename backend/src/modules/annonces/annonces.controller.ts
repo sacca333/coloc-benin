@@ -7,7 +7,7 @@ export const listerAnnonces = async (req: Request, res: Response) => {
   const where: any = { statut: 'ACTIVE' };
   if (ville) where.ville = { contains: String(ville), mode: 'insensitive' };
   if (typeAnnonce) where.type = typeAnnonce;
-  if (budgetMax) where.loyerTotal = { lte: Number(budgetMax) };
+  if (budgetMax) { const budget = Math.min(Number(budgetMax), 2147483647); if (!isNaN(budget)) where.loyerTotal = { lte: budget }; }
   if (nbPlaces) where.nbPlaces = { gte: Number(nbPlaces) };
   if (equipements) {
     const eqs = String(equipements).split(',');
@@ -115,3 +115,4 @@ export const supprimerAnnonce = async (req: AuthRequest, res: Response) => {
   });
   res.json({ message: 'Annonce supprimee' });
 };
+
