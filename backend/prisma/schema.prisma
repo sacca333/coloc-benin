@@ -78,6 +78,12 @@ model Utilisateur {
   messagesRecus    Message[]        @relation("Destinataire")
   colocataires     Colocataire[]
 
+  demandesColEnvoyees DemandeColocation[] @relation("DemandesEnvoyees")
+  demandesColRecues   DemandeColocation[] @relation("DemandesRecues")
+  notifications       Notification[]
+  blocages            Blocage[]           @relation("Bloqueur")
+  bloquesPar          Blocage[]           @relation("Bloque")
+
   @@map("utilisateurs")
 }
 
@@ -169,6 +175,60 @@ model Message {
   createdAt     DateTime    @default(now())
 
   @@map("messages")
+}
+
+enum StatutDemandeColocation {
+  EN_ATTENTE
+  ACCEPTEE
+  REJETEE
+  ANNULEE
+}
+
+enum TypeNotification {
+  DEMANDE_COLOCATION
+  COLOCATION_ACCEPTEE
+  COLOCATION_REJETEE
+  NOUVELLE_ANNONCE
+  BLOCAGE
+  DEBLOCAGE
+}
+
+model DemandeColocation {
+  id             String                  @id @default(uuid())
+  expediteurId   String
+  destinataireId String
+  statut         StatutDemandeColocation @default(EN_ATTENTE)
+  colocationId   String?
+  message        String?
+  createdAt      DateTime                @default(now())
+  updatedAt      DateTime                @updatedAt
+  expediteur     Utilisateur @relation("DemandesEnvoyees", fields: [expediteurId], references: [id])
+  destinataire   Utilisateur @relation("DemandesRecues", fields: [destinataireId], references: [id])
+  @@map("demandes_colocation")
+}
+
+model Notification {
+  id          String           @id @default(uuid())
+  userId      String
+  type        TypeNotification
+  titre       String
+  message     String
+  lu          Boolean          @default(false)
+  data        Json?
+  createdAt   DateTime         @default(now())
+  utilisateur Utilisateur      @relation(fields: [userId], references: [id])
+  @@map("notifications")
+}
+
+model Blocage {
+  id         String      @id @default(uuid())
+  bloqueurId String
+  bloqueId   String
+  createdAt  DateTime    @default(now())
+  bloqueur   Utilisateur @relation("Bloqueur", fields: [bloqueurId], references: [id])
+  bloque     Utilisateur @relation("Bloque", fields: [bloqueId], references: [id])
+  @@unique([bloqueurId, bloqueId])
+  @@map("blocages")
 }
 
 

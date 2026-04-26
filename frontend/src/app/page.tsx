@@ -92,8 +92,8 @@ export default function HomePage() {
 
 
 
-        <section className="w-full bg-white py-10 border-y border-gray-100">
-          <div className="max-w-4xl mx-auto px-4 grid grid-cols-3 gap-6 text-center bg-gray-500/5 rounded-lg py-8">
+        <section className="w-full  py-10 border-y border-gray-100">
+          <div className="max-w-4xl mx-auto px-4 grid grid-cols-3 gap-6 text-center bg-gray-400 rounded-lg py-8">
             <div>
               <p className="text-3xl font-bold text-blue-500">500+</p>
               <p className="text-sm text-gray-500 mt-1">Étudiants inscrits</p>
@@ -108,46 +108,7 @@ export default function HomePage() {
             </div>
           </div>
         </section>
-
-        {/* ---- SECTION TÉMOIGNAGES ---- */}
-        <section className="w-full bg-white py-14 bg-gray-700">
-          <div className="max-w-5xl mx-auto px-4">
-            <h2 className="text-2xl font-bold text-center text-blue-100 mb-2">Ce qu'ils disent de nous</h2>
-            <p className="text-center text-gray-500 text-sm mb-10">Des étudiants béninois qui ont trouvé leur colocation grâce à ColocBénin</p>
-            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
-              {[
-                {
-                  nom: "Adjobi K.",
-                  ville: "Cotonou",
-                  texte: "J'ai trouvé ma coloc en moins de 3 jours. La plateforme est simple et les profils sont fiables !",
-                  avatar: "👩🏾‍🎓",
-                },
-                {
-                  nom: "Rodrigue M.",
-                  ville: "Abomey-Calavi",
-                  texte: "Le paiement via MoMo c'est parfait pour nous. Je recommande à tous les étudiants de l'UAC.",
-                  avatar: "👨🏾‍🎓",
-                },
-                {
-                  nom: "Fatouma B.",
-                  ville: "Parakou",
-                  texte: "Super expérience ! J'ai pu discuter avec plusieurs colocataires avant de faire mon choix.",
-                  avatar: "👩🏾‍💻",
-                },
-              ].map(({ nom, ville, texte, avatar }) => (
-                <div key={nom} className="bg-blue-50 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-1">
-                  <span className="text-4xl mb-3 block">{avatar}</span>
-                  <p className="text-sm text-gray-600 leading-relaxed mb-4">"{texte}"</p>
-                  <div>
-                    <p className="font-semibold text-blue-800 text-sm">{nom}</p>
-                    <p className="text-xs text-gray-400">{ville}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
+       
 
         {/* ---- NOUVELLE SECTION SLIDER ---- */}
         <section className="w-full">
@@ -199,7 +160,7 @@ export default function HomePage() {
               <>
                 <h2 className="text-xl font-semibold text-green-700 mb-2">Prêt à trouver votre Coloc ?</h2>
                 <p className="text-sm text-black-800 mb-6">Rejoignez des centaines d'étudiants béninois déjà inscrits.</p>
-                <Link href="/auth/register" className="px-8 py-3 text-base font-semibold rounded-2xl text-white bg-blue-700 hover:bg-blue-800 transition-all inline-block">S inscrire gratuitement</Link>
+                <Link href="/auth/register" className="px-8 py-3 text-base font-semibold rounded-2xl text-white bg-blue-700 hover:bg-blue-800 transition-all inline-block">S'inscrire gratuitement</Link>
               </>
             )}
           </div>

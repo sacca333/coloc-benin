@@ -148,8 +148,8 @@ export function Navbar() {
             </span>
           </Link>
           <div className="flex items-center gap-3">
-            <Link href="/auth/login" className="text-sm text-sky-200 hover:text-white">Connexion</Link>
-            <Link href="/auth/register" className="px-4 py-2 rounded-xl bg-white text-sky-800 text-sm font-semibold hover:bg-yellow-300 transition-colors">S inscrire</Link>
+            <Link href="/auth/login" className="text-sm text-green-500 hover:text-white">Connexion</Link>
+            <Link href="/auth/register" className="px-4 py-2 rounded-xl bg-white text-sky-800 text-sm font-semibold hover:bg-yellow-300 transition-colors">S'inscrire</Link>
           </div>
         </div>
       </nav>
@@ -195,7 +195,7 @@ export function Navbar() {
         <div className="px-3 mt-4 border-t border-sky-800 pt-4">
           {!abonnementActif && (
             <Link href="/abonnement" className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500/10 text-amber-400 text-xs font-medium mb-3 hover:bg-amber-500/20 transition-colors">
-              <span>⚡</span> Activer l abonnement
+              <span>⚡</span> Activer l'abonnement
             </Link>
           )}
           <div className="relative" ref={profileRef}>
