@@ -92,23 +92,73 @@ export default function HomePage() {
 
 
 
-        <section className="w-full  py-10 border-y border-gray-100">
-          <div className="max-w-4xl mx-auto px-4 grid grid-cols-3 gap-6 text-center bg-gray-400 rounded-lg py-8">
-            <div>
-              <p className="text-3xl font-bold text-blue-500">500+</p>
-              <p className="text-sm text-gray-500 mt-1">Étudiants inscrits</p>
+        {/* Section héro + stats */}
+        <section className="w-full px-4 py-12 bg-gradient-to-b from-[#1a2744]/30 to-[#1a2744]/80 text-white">
+          <div className="max-w-5xl mx-auto px-4 space-y-4">
+
+            {/* Bloc principal */}
+            <div className="bg-[#1a2744] rounded-2xl p-8 md:p-10 grid grid-cols-1 md:grid-cols-2 gap-8 items-center relative overflow-hidden">
+              {/* Cercle décoratif */}
+              <div className="absolute -top-16 -right-16 w-56 h-56 rounded-full bg-purple-500/10 pointer-events-none" />
+
+              {/* Texte gauche */}
+              <div className="relative z-10">
+                <span className="inline-block bg-purple-500/20 text-purple-300 text-xs font-medium px-3 py-1 rounded-full mb-4 tracking-wide">
+                  Plateforme étudiante · Bénin
+                </span>
+                <h2 className="text-2xl md:text-3xl font-semibold text-white leading-snug mb-3">
+                  La colocation étudiante<br />
+                  <span className="text-blue-300">repensée pour le Bénin</span>
+                </h2>
+                <p className="text-sm text-slate-400 leading-relaxed mb-6">
+                  Vous cherchez un colocataire de confiance à{' '}
+                  <strong className="text-slate-300">Cotonou, Abomey-Calavi ou Porto-Novo</strong> ?{' '}
+                  <strong className="text-slate-300">ColocBénin</strong> est la première plateforme
+                  dédiée aux étudiants béninois. Trouvez, discutez et emménagez — le tout depuis
+                  votre téléphone, pour seulement{' '}
+                  <strong className="text-slate-300">300 FCFA/mois</strong>.
+                </p>
+                <Link href="/auth/register" className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-5 py-2.5 rounded-xl transition-colors">
+                  Créer mon compte gratuitement
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                    <path d="M3 8h10M9 4l4 4-4 4" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </Link>
+              </div>
+
+              {/* Photo + callout droite */}
+              <div className="relative z-10 flex flex-col items-center gap-3">
+                <div className="w-48 h-48 md:w-52 md:h-52 rounded-2xl overflow-hidden shadow-2xl">
+                  <img
+                    src="/etudiants-coloc.png"
+                    alt="Étudiants béninois dans leur chambre partagée"
+                    className="w-full h-full object-cover object-top"
+                  />
+                </div>
+                <div className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-center">
+                  <p className="text-xs text-slate-400 mb-1">Abonnement mensuel</p>
+                  <p className="text-sm font-semibold text-yellow-400">300 FCFA seulement !</p>
+                </div>
+              </div>
             </div>
-            <div>
-              <p className="text-3xl font-bold text-blue-500">30+</p>
-              <p className="text-sm text-gray-500 mt-1 ">Villes couvertes</p>
+
+            {/* Bande stats */}
+            <div className="grid grid-cols-3 gap-3">
+              {[
+                { value: '500+', label: 'Étudiants inscrits' },
+                { value: '30+', label: 'Villes couvertes' },
+                { value: '98%', label: 'Étudiants satisfaits' },
+              ].map(({ value, label }) => (
+                <div key={label} className="bg-white/5 border border-white/[0.06] bg-[#1a2744] rounded-xl py-4 text-center">
+                  <span className="block text-xl font-semibold text-white-300 mb-1">{value}</span>
+                  <span className="text-xs text-white/60 text-slate-500">{label}</span>
+                </div>
+              ))}
             </div>
-            <div>
-              <p className="text-3xl font-bold text-blue-500">300 FCFA</p>
-              <p className="text-sm text-gray-500 mt-1">Par mois seulement</p>
-            </div>
+
           </div>
         </section>
-       
+
 
         {/* ---- NOUVELLE SECTION SLIDER ---- */}
         <section className="w-full">

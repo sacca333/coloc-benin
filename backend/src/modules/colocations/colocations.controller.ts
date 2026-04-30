@@ -191,7 +191,7 @@ export const marquerLoyerPaye = async (req: AuthRequest, res: Response) => {
       utilisateurId: req.user!.id,
       statut: 'ACTIF',
     },
-    data: { loierConfirme: true },
+    data: { loyerConfirme: true },
   });
 
   if (result.count === 0) {
@@ -212,7 +212,7 @@ export const mettreAJourStatutColocataire = async (req: AuthRequest, res: Respon
 
   await prisma.colocataire.updateMany({
     where: { colocId, utilisateurId: targetUserId },
-    data: { statut, loierConfirme: false },
+    data: { statut, loyerConfirme: false },
   });
 
   // Si quelqu'un part : recalculer les parts et éventuellement désactiver la coloc
@@ -240,3 +240,4 @@ export const mettreAJourStatutColocataire = async (req: AuthRequest, res: Respon
 
   res.json({ message: 'Statut du colocataire mis à jour' });
 };
+

@@ -38,13 +38,6 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
   }
 };
 
-export const requireAdmin = (req: AuthRequest, res: Response, next: NextFunction) => {
-  if (req.user?.typeCompte !== 'ADMIN') {
-    return res.status(403).json({ error: 'Accès réservé aux administrateurs' });
-  }
-  next();
-};
-
 // FIX : ajout du try/catch sur requireAbonnementActif
 export const requireAbonnementActif = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
@@ -68,4 +61,11 @@ export const requireAbonnementActif = async (req: AuthRequest, res: Response, ne
     console.error('[requireAbonnementActif]', error);
     return res.status(500).json({ error: 'Erreur serveur lors de la vérification de l\'abonnement' });
   }
+};
+
+export const requireAdmin = (req: AuthRequest, res: Response, next: NextFunction) => {
+  if (req.user?.typeCompte !== 'ADMIN') {
+    return res.status(403).json({ error: 'Accès réservé aux administrateurs' });
+  }
+  return next();
 };

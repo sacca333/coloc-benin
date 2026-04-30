@@ -15,18 +15,15 @@ import { adminRouter } from './modules/admin/admin.router';
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-// ── Sécurité ─────────────────────────────────────────────────────────────────
 app.use(helmet());
 app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
 app.use(express.json({ limit: '10mb' }));
 
-const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: process.env.NODE_ENV === 'development' ? 1000 : 100, });
+const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: process.env.NODE_ENV === 'development' ? 1000 : 100 });
 app.use('/api/', limiter);
 
-// ── Fichiers statiques (photos) ───────────────────────────────────────────────
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
-// ── Routes ────────────────────────────────────────────────────────────────────
 app.use('/api/auth', authRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/annonces', annoncesRouter);
@@ -35,15 +32,8 @@ app.use('/api/abonnements', abonnementsRouter);
 app.use('/api/messagerie', messagerieRouter);
 app.use('/api/admin', adminRouter);
 
-// Webhooks paiement (pas de rate-limit strict, mais vérification signature)
-app.use('/webhooks/momo', abonnementsRouter);
-app.use('/webhooks/ccash', abonnementsRouter);
-app.use('/webhooks/moov', abonnementsRouter);
-
-// ── Health check ──────────────────────────────────────────────────────────────
 app.get('/health', (_req, res) => res.json({ status: 'ok', version: '1.0.0' }));
 
-// ── Gestion d'erreurs globale ─────────────────────────────────────────────────
 app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   console.error(err.stack);
   res.status(500).json({ error: 'Erreur interne du serveur' });

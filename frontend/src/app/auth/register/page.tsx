@@ -94,7 +94,7 @@ export default function RegisterPage() {
             <div className="mb-4 p-3 bg-red-50 text-red-600 text-sm rounded-lg border border-red-100">{serverError}</div>
           )}
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 bg-white p-6 rounded-xl shadow">
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Prénom</label>
@@ -138,12 +138,12 @@ export default function RegisterPage() {
               <label className="block text-sm font-medium text-gray-700 mb-1">Université / École</label>
               <input {...register('universite')} className="input" placeholder="UAC, EPAC, HECM..." />
             </div>
-            <button type="submit" disabled={isSubmitting} className="btn-primary w-full mt-2">
+            <button type="submit" disabled={isSubmitting} className="btn-primary bg-blue-500 hover:bg-blue-600 text-white w-full mt-2">
               {isSubmitting ? 'Création en cours...' : 'Créer mon compte'}
             </button>
             <p className="text-center text-sm text-gray-500">
               Déjà un compte ?{' '}
-              <Link href="/auth/login" className="text-blue-600 hover:underline font-medium">Se connecter</Link>
+              <Link href="/auth/login" className="text-blue-600 bg-bluehover:underline font-medium">Se connecter</Link>
             </p>
           </form>
         </div>

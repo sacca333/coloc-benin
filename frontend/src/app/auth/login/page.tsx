@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Link from 'next/link';
@@ -24,7 +24,12 @@ export default function LoginPage() {
     try {
       const { data } = await authApi.login(email, motDePasse);
       login(data.token, data.utilisateur, data.abonnementActif);
-      router.push('/dashboard');
+      // Redirection selon le rôle
+      if (data.utilisateur.typeCompte === 'ADMIN') {
+        router.push('/admin');
+      } else {
+        router.push('/dashboard');
+      };
     } catch (err: any) {
       setServerError(err.response?.data?.error || 'Identifiants invalides');
     }
@@ -49,7 +54,7 @@ export default function LoginPage() {
       {/* Navbar */}
       <nav className="bg-sky-800 h-14 flex items-center px-6">
         <Link href="/" className="flex items-center gap-2">
-          <img src="/logo.png" alt="logo" className="w-10 h-12 rounded-xl object-cover" />
+          <img src="/logo.png" alt="logo" className="w-8 h-8 rounded-xl object-cover" />
           <span className="font-bold text-lg">
             <span className="text-green-400">Coloc</span>
             <span className="text-yellow-400">Bénin</span>
@@ -124,7 +129,7 @@ export default function LoginPage() {
                 </div>
               )}
 
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 bg-white p-6 rounded-xl shadow">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
                   <input {...register('email', { required: true })} type="email" className="input" placeholder="votre@email.bj" />
@@ -142,7 +147,7 @@ export default function LoginPage() {
                   </div>
                   <input {...register('motDePasse', { required: true })} type="password" className="input" />
                 </div>
-                <button type="submit" disabled={isSubmitting} className="btn-primary w-full">
+                <button type="submit" disabled={isSubmitting} className="btn-primary bg-blue-500 hover:bg-blue-600 text-white w-full">
                   {isSubmitting ? 'Connexion...' : 'Se connecter'}
                 </button>
               </form>

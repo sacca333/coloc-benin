@@ -78,3 +78,4 @@ export const messagerieApi = {
   envoyer: (destinataireId: string, contenu: string) =>
     api.post(`/messagerie/${destinataireId}`, { contenu }),
 };
+export { api };
