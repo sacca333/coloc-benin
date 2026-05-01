@@ -53,7 +53,7 @@ export default function AdminPage() {
   }, []);
 
   return (
-    <div style={{ maxWidth: 1160 }}>
+    <div style={{ maxWidth: 1160, minHeight: '100vh', background: '#F8FAFC' }}>
       <div style={{ marginBottom: 36 }}>
         <div style={{ fontSize: 10, color: '#10B981', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 6 }}>Tableau de bord</div>
         <h1 style={{ fontSize: 34, fontWeight: 800, color: '#F1F5F9', margin: 0, letterSpacing: '-1px' }}>Vue d'ensemble</h1>
