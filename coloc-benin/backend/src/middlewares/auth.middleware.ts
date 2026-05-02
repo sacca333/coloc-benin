@@ -38,7 +38,7 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
   }
 };
 
-// FIX : ajout du try/catch sur requireAbonnementActif
+// Vérifie que l'abonnement est actif pour les actions sensibles
 export const requireAbonnementActif = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const abonnement = await prisma.abonnement.findFirst({
@@ -48,24 +48,15 @@ export const requireAbonnementActif = async (req: AuthRequest, res: Response, ne
         periodeFin: { gte: new Date() },
       },
     });
-
     if (!abonnement) {
       return res.status(402).json({
         error: 'Abonnement requis',
         message: 'Votre abonnement est expiré ou inactif. Veuillez renouveler pour accéder à cette fonctionnalité.',
       });
     }
-
     next();
   } catch (error) {
     console.error('[requireAbonnementActif]', error);
     return res.status(500).json({ error: 'Erreur serveur lors de la vérification de l\'abonnement' });
   }
-};
-
-export const requireAdmin = (req: AuthRequest, res: Response, next: NextFunction) => {
-  if (req.user?.typeCompte !== 'ADMIN') {
-    return res.status(403).json({ error: 'Accès réservé aux administrateurs' });
-  }
-  return next();
 };

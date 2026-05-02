@@ -45,18 +45,23 @@ export const requireAdmin = (req: AuthRequest, res: Response, next: NextFunction
 
 // Vérifie que l'abonnement est actif pour les actions sensibles
 export const requireAbonnementActif = async (req: AuthRequest, res: Response, next: NextFunction) => {
-  const abonnement = await prisma.abonnement.findFirst({
-    where: {
-      utilisateurId: req.user!.id,
-      statut: 'ACTIF',
-      periodeFin: { gte: new Date() },
-    },
-  });
-  if (!abonnement) {
-    return res.status(402).json({
-      error: 'Abonnement requis',
-      message: 'Votre abonnement est expiré ou inactif. Veuillez renouveler pour accéder à cette fonctionnalité.',
+  try {
+    const abonnement = await prisma.abonnement.findFirst({
+      where: {
+        utilisateurId: req.user!.id,
+        statut: 'ACTIF',
+        periodeFin: { gte: new Date() },
+      },
     });
+    if (!abonnement) {
+      return res.status(402).json({
+        error: 'Abonnement requis',
+        message: 'Votre abonnement est expiré ou inactif. Veuillez renouveler pour accéder à cette fonctionnalité.',
+      });
+    }
+    next();
+  } catch (error) {
+    console.error('[requireAbonnementActif]', error);
+    return res.status(500).json({ error: 'Erreur serveur lors de la vérification de l\'abonnement' });
   }
-  next();
 };

@@ -11,6 +11,9 @@
     "db:generate": "prisma generate",
     "db:studio": "prisma studio"
   },
+  "prisma": {
+    "seed": "ts-node-dev --transpile-only prisma/seed-admin.ts"
+  },
   "dependencies": {
     "@prisma/client": "^5.10.0",
     "bcrypt": "^6.0.0",
