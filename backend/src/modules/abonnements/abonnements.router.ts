@@ -1,4 +1,4 @@
-import { Router } from 'express';
+﻿import { Router } from 'express';
 import { body } from 'express-validator';
 import { authenticate } from '../../middlewares/auth.middleware';
 import { validate } from '../../middlewares/validate.middleware';
@@ -9,6 +9,7 @@ import {
   webhookMoMo,
   webhookCCash,
   webhookMoov,
+  confirmerKkiapay,
 } from './abonnements.controller';
 
 export const abonnementsRouter = Router();
@@ -27,6 +28,7 @@ abonnementsRouter.post(
 
 abonnementsRouter.get('/statut', authenticate, getStatut);
 abonnementsRouter.get('/historique', authenticate, getHistorique);
+abonnementsRouter.post('/confirmer-kkiapay', authenticate, confirmerKkiapay);
 
 // Webhooks — pas d'auth JWT, sécurisé par signature opérateur
 export const webhooksRouter = Router();

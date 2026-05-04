@@ -7,7 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 enum TypeCompte {
   ETUDIANT
   PROPRIETAIRE
@@ -51,38 +50,33 @@ enum StatutColocataire {
   PARTI
 }
 
-// ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ ModÃƒÆ’Ã‚Â¨les ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬
-
 model Utilisateur {
-  id               String           @id @default(uuid())
+  id               String              @id @default(uuid())
   nom              String
   prenom           String
-  email            String           @unique
+  email            String              @unique
   telephone        String?
   motDePasse       String
   ville            String?
   universite       String?
   filiere          String?
   niveau           String?
-  typeCompte       TypeCompte       @default(ETUDIANT)
+  typeCompte       TypeCompte          @default(ETUDIANT)
   photo            String?
-  emailVerifie     Boolean          @default(false)
+  emailVerifie     Boolean             @default(false)
   tokenVerifEmail  String?
-  actif            Boolean          @default(true)
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
+  actif            Boolean             @default(true)
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
 
-  annonces         Annonce[]
-  abonnements      Abonnement[]
-  messagesEnvoyes  Message[]        @relation("Expediteur")
-  messagesRecus    Message[]        @relation("Destinataire")
-  colocataires     Colocataire[]
-
-  demandesColEnvoyees DemandeColocation[] @relation("DemandesEnvoyees")
-  demandesColRecues   DemandeColocation[] @relation("DemandesRecues")
-  notifications       Notification[]
-  blocages            Blocage[]           @relation("Bloqueur")
-  bloquesPar          Blocage[]           @relation("Bloque")
+  annonces          Annonce[]
+  abonnements       Abonnement[]
+  messagesEnvoyes   Message[]           @relation("Expediteur")
+  messagesRecus     Message[]           @relation("Destinataire")
+  colocataires      Colocataire[]
+  notifications     Notification[]
+  demandesEnvoyees  DemandeColocation[] @relation("Demandeur")
+  signalements      Signalement[]       @relation("Signaleur")
 
   @@map("utilisateurs")
 }
@@ -97,7 +91,6 @@ model Annonce {
   ville           String
   loyerTotal      Int
   nbPlaces        Int
-  placesRestantes Int           @default(0)
   nbColocataires  Int?
   caution         Int?
   description     String?
@@ -107,7 +100,8 @@ model Annonce {
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
 
-  colocation      Colocation?
+  colocation   Colocation?
+  signalements Signalement[]
 
   @@map("annonces")
 }
@@ -126,25 +120,41 @@ model Colocation {
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
 
-  colocataires Colocataire[]
+  colocataires       Colocataire[]
+  demandesColocation DemandeColocation[]
 
   @@map("colocations")
 }
 
 model Colocataire {
-  id           String            @id @default(uuid())
+  id            String            @id @default(uuid())
   utilisateurId String
-  utilisateur  Utilisateur       @relation(fields: [utilisateurId], references: [id])
-  colocId      String
-  colocation   Colocation        @relation(fields: [colocId], references: [id])
-  partLoyer    Int?
-  statut       StatutColocataire @default(EN_ATTENTE)
-  loyerConfirme Boolean          @default(false)
-  createdAt    DateTime          @default(now())
-  updatedAt    DateTime          @updatedAt
+  utilisateur   Utilisateur       @relation(fields: [utilisateurId], references: [id])
+  colocId       String
+  colocation    Colocation        @relation(fields: [colocId], references: [id])
+  partLoyer     Int?
+  statut        StatutColocataire @default(EN_ATTENTE)
+  loyerConfirme Boolean           @default(false)
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
 
   @@unique([utilisateurId, colocId])
   @@map("colocataires")
+}
+
+model DemandeColocation {
+  id           String      @id @default(uuid())
+  demandeurId  String
+  demandeur    Utilisateur @relation("Demandeur", fields: [demandeurId], references: [id])
+  colocationId String
+  colocation   Colocation  @relation(fields: [colocationId], references: [id])
+  message      String?
+  statut       String      @default("EN_ATTENTE")
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  @@unique([demandeurId, colocationId])
+  @@map("demandes_colocation")
 }
 
 model Abonnement {
@@ -153,7 +163,7 @@ model Abonnement {
   utilisateur   Utilisateur       @relation(fields: [utilisateurId], references: [id])
   operateur     OperateurPaiement
   montant       Int               @default(300)
-  referenceOp   String?           // rÃƒÆ’Ã‚Â©fÃƒÆ’Ã‚Â©rence transaction opÃƒÆ’Ã‚Â©rateur
+  referenceOp   String?
   statut        StatutAbonnement  @default(EN_ATTENTE)
   periodeDebut  DateTime?
   periodeFin    DateTime?
@@ -165,71 +175,54 @@ model Abonnement {
 }
 
 model Message {
-  id            String      @id @default(uuid())
-  expediteurId  String
-  expediteur    Utilisateur @relation("Expediteur", fields: [expediteurId], references: [id])
+  id             String      @id @default(uuid())
+  expediteurId   String
+  expediteur     Utilisateur @relation("Expediteur", fields: [expediteurId], references: [id])
   destinataireId String
-  destinataire  Utilisateur @relation("Destinataire", fields: [destinataireId], references: [id])
-  contenu       String
-  lu            Boolean     @default(false)
-  createdAt     DateTime    @default(now())
+  destinataire   Utilisateur @relation("Destinataire", fields: [destinataireId], references: [id])
+  contenu        String
+  lu             Boolean     @default(false)
+  createdAt      DateTime    @default(now())
 
   @@map("messages")
 }
 
-enum StatutDemandeColocation {
-  EN_ATTENTE
-  ACCEPTEE
-  REJETEE
-  ANNULEE
-}
-
-enum TypeNotification {
-  DEMANDE_COLOCATION
-  COLOCATION_ACCEPTEE
-  COLOCATION_REJETEE
-  NOUVELLE_ANNONCE
-  BLOCAGE
-  DEBLOCAGE
-}
-
-model DemandeColocation {
-  id             String                  @id @default(uuid())
-  expediteurId   String
-  destinataireId String
-  statut         StatutDemandeColocation @default(EN_ATTENTE)
-  colocationId   String?
-  message        String?
-  createdAt      DateTime                @default(now())
-  updatedAt      DateTime                @updatedAt
-  expediteur     Utilisateur @relation("DemandesEnvoyees", fields: [expediteurId], references: [id])
-  destinataire   Utilisateur @relation("DemandesRecues", fields: [destinataireId], references: [id])
-  @@map("demandes_colocation")
-}
-
 model Notification {
-  id          String           @id @default(uuid())
-  userId      String
-  type        TypeNotification
-  titre       String
-  message     String
-  lu          Boolean          @default(false)
-  data        Json?
-  createdAt   DateTime         @default(now())
-  utilisateur Utilisateur      @relation(fields: [userId], references: [id])
+  id            String      @id @default(uuid())
+  utilisateurId String
+  utilisateur   Utilisateur @relation(fields: [utilisateurId], references: [id])
+  type          String
+  titre         String
+  message       String
+  data          Json?
+  lu            Boolean     @default(false)
+  createdAt     DateTime    @default(now())
+
   @@map("notifications")
 }
 
-model Blocage {
-  id         String      @id @default(uuid())
-  bloqueurId String
-  bloqueId   String
-  createdAt  DateTime    @default(now())
-  bloqueur   Utilisateur @relation("Bloqueur", fields: [bloqueurId], references: [id])
-  bloque     Utilisateur @relation("Bloque", fields: [bloqueId], references: [id])
-  @@unique([bloqueurId, bloqueId])
-  @@map("blocages")
+model Signalement {
+  id          String      @id @default(uuid())
+  annonceId   String
+  annonce     Annonce     @relation(fields: [annonceId], references: [id])
+  signaleurId String
+  signaleur   Utilisateur @relation("Signaleur", fields: [signaleurId], references: [id])
+  raison      String
+  details     String?
+  statut      String      @default("EN_ATTENTE")
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@unique([annonceId, signaleurId])
+  @@map("signalements")
 }
 
+model Ville {
+  id        String   @id @default(uuid())
+  nom       String   @unique
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-
+  @@map("villes")
+}

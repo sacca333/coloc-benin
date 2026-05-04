@@ -1,7 +1,6 @@
 ﻿'use client';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '../../hooks/useAuth';
-import { Navbar } from './Navbar';
 
 export function LayoutWrapper({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
@@ -9,15 +8,13 @@ export function LayoutWrapper({ children }: { children: React.ReactNode }) {
   const isPublic = !user || pathname.startsWith('/auth');
   const isAdmin = pathname.startsWith('/admin');
 
-  // Pages admin : pas de Navbar ni de padding, elles ont leur propre layout
+  // Pages admin : pas de padding, elles ont leur propre layout complet
   if (isAdmin) return <>{children}</>;
 
+  // Pages authentifiées : padding pour laisser place à la sidebar (240px = w-60)
   return (
-    <>
-      {!isPublic && <Navbar />}
-      <div className={!isPublic ? 'md:pl-60' : ''}>
-        {children}
-      </div>
-    </>
+    <div className={!isPublic ? 'md:pl-60' : ''}>
+      {children}
+    </div>
   );
 }

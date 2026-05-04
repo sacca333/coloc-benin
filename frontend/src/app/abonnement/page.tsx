@@ -1,173 +1,235 @@
-'use client';
+﻿'use client';
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { useRequireAuth } from '../../hooks/useAuth';
 import { abonnementsApi } from '../../lib/api';
-import { Abonnement, OperateurPaiement } from '../../types';
+import { Abonnement } from '../../types';
 import { Navbar } from '../../components/layout/Navbar';
-import clsx from 'clsx';
 
-const OPERATEURS = [
-  {
-    id: 'MOMO' as OperateurPaiement,
-    nom: 'MTN MoMo',
-    couleur: 'bg-yellow-50 border-yellow-200 text-yellow-800',
-    actif: 'ring-2 ring-yellow-400',
-    prefix: '96, 97',
-  },
-  {
-    id: 'CCASH' as OperateurPaiement,
-    nom: "C'cash (Celtiis)",
-    couleur: 'bg-blue-50 border-blue-200 text-blue-800',
-    actif: 'ring-2 ring-blue-400',
-    prefix: '94, 95',
-  },
-  {
-    id: 'MOOV_MONEY' as OperateurPaiement,
-    nom: 'Moov Money',
-    couleur: 'bg-green-50 border-green-200 text-green-800',
-    actif: 'ring-2 ring-green-400',
-    prefix: '99',
-  },
-];
+const KKIAPAY_PUBLIC_KEY = '4bb03f5045cd11f1aeef5d6fe67ac015';
+const MONTANT = 300;
 
 const STATUT_LABELS: Record<string, string> = {
-  ACTIF: 'Actif', EXPIRE: 'Expiré', EN_ATTENTE: 'En attente', ECHEC: 'Échoué',
+  ACTIF: 'Actif', EXPIRE: 'Expire', EN_ATTENTE: 'En attente', ECHEC: 'Echoue',
 };
 
 export default function AbonnementPage() {
   const { user, isLoading } = useRequireAuth();
-  const router = useRouter();
-  const [operateur, setOperateur] = useState<OperateurPaiement>('MOMO');
-  const [telephone, setTelephone] = useState('');
-  const [submitting, setSubmitting] = useState(false);
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
   const [historique, setHistorique] = useState<Abonnement[]>([]);
   const [statut, setStatut] = useState<{ actif: boolean; periodeFin?: string } | null>(null);
+  const [paying, setPaying] = useState(false);
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
+  const [scriptLoaded, setScriptLoaded] = useState(false);
 
+  // Charger script KKiaPay
+  useEffect(() => {
+    if (document.getElementById('kkiapay-script')) { setScriptLoaded(true); return; }
+    const script = document.createElement('script');
+    script.id = 'kkiapay-script';
+    script.src = 'https://cdn.kkiapay.me/k.js';
+    script.async = true;
+    script.onload = () => { console.log('[KKiaPay] Script chargé'); setScriptLoaded(true); };
+    script.onerror = () => console.error('[KKiaPay] Erreur chargement script');
+    document.body.appendChild(script);
+  }, []);
+
+  // Charger données utilisateur
   useEffect(() => {
     if (!user) return;
-    abonnementsApi.statut().then(r => setStatut(r.data));
-    abonnementsApi.historique().then(r => setHistorique(r.data));
+    abonnementsApi.statut().then(r => setStatut(r.data)).catch(() => {});
+    abonnementsApi.historique().then(r => setHistorique(r.data)).catch(() => {});
   }, [user]);
 
-  const handlePayer = async () => {
-    if (!telephone.trim()) { setError('Entrez votre numéro de téléphone'); return; }
-    setSubmitting(true); setError(''); setMessage('');
-    try {
-      const { data } = await abonnementsApi.initier(operateur, telephone);
-      setMessage(`${data.message} — Confirmez le paiement de 300 FCFA sur votre téléphone.`);
-    } catch (err: any) {
-      setError(err.response?.data?.error || 'Erreur lors du paiement');
-    } finally {
-      setSubmitting(false);
+  // Écouter les messages postMessage de KKiaPay
+  useEffect(() => {
+    const handleMessage = async (event: MessageEvent) => {
+      console.log('[KKiaPay postMessage]', event.origin, JSON.stringify(event.data));
+
+      // KKiaPay envoie les événements via postMessage
+      const data = event.data;
+      if (!data) return;
+
+      // Succès
+      if (data.name === 'PAYMENT_SUCCESS' && data.data?.transactionId) {
+        console.log('[KKiaPay] Paiement réussi détecté:', JSON.stringify(data));
+        const transactionId = data.data.transactionId;
+        if (!transactionId) { console.error('[KKiaPay] Pas de transactionId'); return; }
+        setPaying(true);
+        setError('');
+        try {
+          await abonnementsApi.confirmerKkiapay(transactionId);
+          setMessage('Paiement confirme ! Votre abonnement est maintenant actif.');
+          const [s, h] = await Promise.all([abonnementsApi.statut(), abonnementsApi.historique()]);
+          setStatut(s.data);
+          setHistorique(h.data);
+        } catch (err: any) {
+          console.error('[KKiaPay] Erreur confirmation:', err);
+          setError('Paiement recu mais confirmation echouee : ' + (err?.response?.data?.error || err?.message));
+        } finally { setPaying(false); }
+      }
+
+      // Échec
+      if (data.name === 'PAYMENT_FAILED' || data.name === 'PAYMENT_CANCELLED') {
+        console.log('[KKiaPay] Paiement échoué:', JSON.stringify(data));
+        setError('Le paiement a echoue. Reessayez.');
+        setPaying(false);
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, []);
+
+  // Aussi essayer les listeners KKiaPay classiques
+  useEffect(() => {
+    if (!scriptLoaded) return;
+
+    const onSuccess = async (data: any) => {
+      console.log('[KKiaPay addListener success]', JSON.stringify(data));
+      const transactionId = data.transactionId || data.transaction_id || data.id;
+      if (!transactionId) return;
+      setPaying(true);
+      setError('');
+      try {
+        await abonnementsApi.confirmerKkiapay(transactionId);
+        setMessage('Paiement confirme ! Votre abonnement est maintenant actif.');
+        const [s, h] = await Promise.all([abonnementsApi.statut(), abonnementsApi.historique()]);
+        setStatut(s.data);
+        setHistorique(h.data);
+      } catch (err: any) {
+        setError('Confirmation echouee : ' + (err?.response?.data?.error || err?.message));
+      } finally { setPaying(false); }
+    };
+
+    const onFailed = (data: any) => {
+      console.log('[KKiaPay addListener failed]', JSON.stringify(data));
+      setError('Le paiement a echoue. Reessayez.');
+      setPaying(false);
+    };
+
+    (window as any).addKkiapayListener?.('success', onSuccess);
+    (window as any).addKkiapayListener?.('failed', onFailed);
+
+    return () => {
+      (window as any).removeKkiapayListener?.('success', onSuccess);
+      (window as any).removeKkiapayListener?.('failed', onFailed);
+    };
+  }, [scriptLoaded]);
+
+  const ouvrirWidget = () => {
+    if (!scriptLoaded || !(window as any).openKkiapayWidget) {
+      setError('Module de paiement en cours de chargement. Reessayez.');
+      return;
     }
+    setError('');
+    setMessage('');
+    console.log('[KKiaPay] Ouverture widget...');
+    (window as any).openKkiapayWidget({
+      amount: MONTANT,
+      api_key: KKIAPAY_PUBLIC_KEY,
+      sandbox: true,
+      name: (user?.prenom || '') + ' ' + (user?.nom || ''),
+      email: user?.email || '',
+      phone: '',
+      reason: 'Abonnement mensuel ColocBenin',
+      theme: '#0284c7',
+    });
   };
 
-  if (isLoading) return <div className="min-h-screen flex items-center justify-center text-gray-400">Chargement...</div>;
+  if (isLoading) return (
+    <div className="min-h-screen flex items-center justify-center">
+      <div style={{ width: 32, height: 32, border: '3px solid #0284c7', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin .8s linear infinite' }} />
+      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+    </div>
+  );
+
+  const finDate = statut?.periodeFin ? new Date(statut.periodeFin) : null;
 
   return (
     <>
       <Navbar />
-      <main className="max-w-2xl mx-auto px-4 py-8">
-        {/* Statut actuel */}
-        <div className="card mb-6">
-          <h2 className="font-semibold text-base mb-3">Statut de votre abonnement</h2>
+      <main className="max-w-2xl mx-auto px-4 py-8" style={{ fontFamily: "'Syne',sans-serif" }}>
+        <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+
+        <div style={{ background: '#fff', border: '1px solid #e0f2fe', borderRadius: 16, padding: 24, marginBottom: 16, boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
+          <div style={{ fontSize: 10, color: '#0284c7', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 8, fontWeight: 700 }}>Statut abonnement</div>
           {statut?.actif ? (
-            <div className="flex items-center gap-3">
-              <span className="badge-actif text-sm px-3 py-1">Abonnement actif</span>
-              {statut.periodeFin && (
-                <span className="text-sm text-gray-500">
-                  jusqu'au {new Date(statut.periodeFin).toLocaleDateString('fr-FR')}
-                </span>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+                <span style={{ fontSize: 22 }}>✅</span>
+                <span style={{ fontSize: 16, fontWeight: 700, color: '#065f46' }}>Abonnement actif</span>
+              </div>
+              {finDate && (
+                <div style={{ fontSize: 13, color: '#64748b' }}>
+                  Valable jusqu'au <strong style={{ color: '#0c4a6e' }}>{finDate.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}</strong>
+                </div>
               )}
             </div>
           ) : (
-            <p className="text-sm text-gray-500">Aucun abonnement actif — 300 FCFA / mois pour accéder à toutes les fonctionnalités.</p>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+                <span style={{ fontSize: 22 }}>🔒</span>
+                <span style={{ fontSize: 16, fontWeight: 700, color: '#991b1b' }}>Aucun abonnement actif</span>
+              </div>
+              <div style={{ fontSize: 13, color: '#64748b' }}>Abonnez-vous — <strong>300 FCFA / mois</strong></div>
+            </div>
           )}
         </div>
 
-        {/* Formulaire de paiement */}
-        <div className="card mb-6">
-          <h2 className="font-semibold text-base mb-4">
-            {statut?.actif ? 'Renouveler mon abonnement' : 'Activer mon abonnement'}
-          </h2>
+        <div style={{ background: '#fff', border: '1px solid #e0f2fe', borderRadius: 16, padding: 24, marginBottom: 16, boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
+          <div style={{ fontSize: 10, color: '#0284c7', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 12, fontWeight: 700 }}>
+            {statut?.actif ? 'Renouveler' : 'Activer mon abonnement'}
+          </div>
 
-          <p className="text-sm text-gray-500 mb-4">Choisissez votre opérateur mobile :</p>
-          <div className="grid grid-cols-3 gap-3 mb-5">
-            {OPERATEURS.map(op => (
-              <button
-                key={op.id}
-                onClick={() => setOperateur(op.id)}
-                className={clsx(
-                  'border rounded-xl p-3 text-sm font-medium text-left transition-all',
-                  op.couleur,
-                  operateur === op.id && op.actif
-                )}
-              >
-                <div className="font-semibold">{op.nom}</div>
-                <div className="text-xs opacity-70 mt-0.5">Numéros {op.prefix}</div>
-              </button>
+          <div style={{ marginBottom: 20 }}>
+            {['Acces a toutes les annonces', 'Messagerie avec les proprietaires', 'Gestion de vos colocations', 'Support prioritaire'].map((f, i) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '5px 0', fontSize: 13, color: '#475569' }}>
+                <span style={{ color: '#16a34a', fontWeight: 700 }}>✓</span> {f}
+              </div>
             ))}
           </div>
 
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Numéro de téléphone mobile money
-            </label>
-            <input
-              type="tel"
-              value={telephone}
-              onChange={e => setTelephone(e.target.value)}
-              className="input"
-              placeholder="+229 97000000"
-            />
-          </div>
-
-          <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg mb-4">
-            <span className="text-sm text-gray-600">Montant</span>
-            <span className="font-semibold text-gray-900">300 FCFA</span>
-          </div>
-
-          {error && <p className="text-sm text-red-500 mb-3">{error}</p>}
-          {message && (
-            <div className="p-3 bg-teal-50 text-teal-700 text-sm rounded-lg border border-teal-100 mb-3">
-              {message}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', background: '#f0f9ff', borderRadius: 12, marginBottom: 16 }}>
+            <div>
+              <div style={{ fontSize: 13, color: '#64748b' }}>Abonnement mensuel</div>
+              <div style={{ fontSize: 11, color: '#94a3b8' }}>Renouvelable chaque mois</div>
             </div>
-          )}
+            <div style={{ fontSize: 26, fontWeight: 800, color: '#0284c7', fontFamily: 'monospace' }}>300 FCFA</div>
+          </div>
 
-          <button onClick={handlePayer} disabled={submitting} className="btn-primary w-full">
-            {submitting ? 'Traitement...' : 'Payer 300 FCFA'}
+          <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
+            {[{ label: 'MTN MoMo', color: '#f59e0b', bg: '#fef3c7' }, { label: "C'Cash", color: '#3b82f6', bg: '#dbeafe' }, { label: 'Moov Money', color: '#16a34a', bg: '#d1fae5' }, { label: 'Carte bancaire', color: '#7c3aed', bg: '#ede9fe' }].map((op, i) => (
+              <span key={i} style={{ fontSize: 11, fontWeight: 600, color: op.color, background: op.bg, padding: '3px 10px', borderRadius: 20 }}>{op.label}</span>
+            ))}
+          </div>
+
+          {error && <div style={{ padding: '10px 14px', background: '#fee2e2', borderRadius: 10, fontSize: 13, color: '#991b1b', marginBottom: 12 }}>{error}</div>}
+          {message && <div style={{ padding: '10px 14px', background: '#d1fae5', borderRadius: 10, fontSize: 13, color: '#065f46', marginBottom: 12 }}>{message}</div>}
+
+          <button onClick={ouvrirWidget} disabled={paying || !scriptLoaded}
+            style={{ width: '100%', padding: '14px', borderRadius: 12, border: 'none', background: paying || !scriptLoaded ? '#94a3b8' : '#0284c7', color: '#fff', fontSize: 15, fontWeight: 700, cursor: paying || !scriptLoaded ? 'default' : 'pointer', fontFamily: "'Syne',sans-serif", display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
+            {paying ? (
+              <><div style={{ width: 18, height: 18, border: '2px solid #fff', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin .7s linear infinite' }} />Confirmation...</>
+            ) : !scriptLoaded ? 'Chargement...' : 'Payer 300 FCFA avec KKiaPay'}
           </button>
+          <div style={{ fontSize: 11, color: '#94a3b8', textAlign: 'center', marginTop: 10 }}>Paiement securise par KKiaPay</div>
         </div>
 
-        {/* Historique */}
         {historique.length > 0 && (
-          <div className="card">
-            <h2 className="font-semibold text-base mb-3">Historique des paiements</h2>
-            <div className="space-y-2">
-              {historique.map(ab => (
-                <div key={ab.id} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
-                  <div>
-                    <span className="text-sm font-medium">{ab.operateur.replace('_', ' ')}</span>
-                    <span className="text-xs text-gray-400 ml-2">
-                      {ab.datePaiement ? new Date(ab.datePaiement).toLocaleDateString('fr-FR') : '—'}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm">{ab.montant} FCFA</span>
-                    <span className={clsx(
-                      'text-xs px-2 py-0.5 rounded-full font-medium',
-                      ab.statut === 'ACTIF' ? 'badge-actif' :
-                      ab.statut === 'ECHEC' ? 'badge-expire' : 'badge-attente'
-                    )}>
-                      {STATUT_LABELS[ab.statut]}
-                    </span>
-                  </div>
+          <div style={{ background: '#fff', border: '1px solid #e0f2fe', borderRadius: 16, padding: 24, boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
+            <div style={{ fontSize: 10, color: '#0284c7', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 16, fontWeight: 700 }}>Historique</div>
+            {historique.map((ab, i) => (
+              <div key={ab.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 0', borderBottom: i < historique.length - 1 ? '1px solid #f0f9ff' : 'none' }}>
+                <div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: '#0c4a6e' }}>{ab.operateur?.replace('_', ' ') || 'KKiaPay'}</div>
+                  <div style={{ fontSize: 11, color: '#94a3b8' }}>{ab.datePaiement ? new Date(ab.datePaiement).toLocaleDateString('fr-FR') : '-'}</div>
                 </div>
-              ))}
-            </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: '#0284c7', fontFamily: 'monospace' }}>{ab.montant} F</span>
+                  <span style={{ fontSize: 10, fontWeight: 600, padding: '2px 9px', borderRadius: 20, color: ab.statut === 'ACTIF' ? '#065f46' : ab.statut === 'ECHEC' ? '#991b1b' : '#92400e', background: ab.statut === 'ACTIF' ? '#d1fae5' : ab.statut === 'ECHEC' ? '#fee2e2' : '#fef3c7' }}>{STATUT_LABELS[ab.statut] || ab.statut}</span>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </main>

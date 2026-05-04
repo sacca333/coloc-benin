@@ -32,7 +32,6 @@ export default function AnnoncesPage() {
       .finally(() => setLoading(false));
   }, [filtres, user]);
 
-  // Filtrage local par recherche texte
   const annoncesFiltered = annonces.filter(a => {
     if (!searchQuery) return true;
     const q = searchQuery.toLowerCase();
@@ -58,20 +57,29 @@ export default function AnnoncesPage() {
       <Navbar />
       <main className="max-w-6xl mx-auto px-4 py-8">
         <div className="mb-6">
-          <h1 className="text-xl font-semibold mb-4">Annonces de colocation</h1>
 
-          {/* SearchBar moderne */}
-          <SearchBar
-            onSearch={setSearchQuery}
-            onFilterChange={handleFilterChange}
-          />
+          {/* Header avec bouton publier */}
+          <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
+            <h1 className="text-xl font-semibold">Annonces de colocation</h1>
+            <Link href="/annonces/creer"
+              className="hidden md:flex items-center gap-2 px-4 py-2 rounded-xl bg-sky-700 text-white text-sm font-semibold hover:bg-sky-600 transition-colors shadow-sm">
+              <span className="text-lg leading-none">+</span> Publier une annonce
+            </Link>
+          </div>
+
+          {/* Bouton + rond fixe en bas à droite sur mobile */}
+          <Link href="/annonces/creer"
+            className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-14 h-14 rounded-full bg-sky-700 text-white flex items-center justify-center shadow-lg hover:bg-sky-600 transition-colors"
+            style={{ fontSize: 28, fontWeight: 300, lineHeight: 1 }}>
+            +
+          </Link>
+
+          <SearchBar onSearch={setSearchQuery} onFilterChange={handleFilterChange} />
         </div>
 
-        {/* Panneau filtres avances (visible selon chip actif) */}
         {showFilterPanel && (
           <div className="mb-6 p-4 bg-white rounded-2xl border border-violet-100 shadow-sm space-y-4"
-            style={{ boxShadow: '0 4px 20px rgba(123, 97, 255, 0.08)' }}
-          >
+            style={{ boxShadow: '0 4px 20px rgba(123, 97, 255, 0.08)' }}>
             {activeFilter === 'ville' && (
               <div>
                 <label className="text-xs font-semibold text-gray-500 mb-2 block uppercase tracking-wide">Ville</label>
@@ -123,7 +131,6 @@ export default function AnnoncesPage() {
           </div>
         )}
 
-        {/* Resultats */}
         <div className="mb-3">
           <p className="text-sm text-gray-500">{annoncesFiltered.length} resultat{annoncesFiltered.length > 1 ? 's' : ''}</p>
         </div>
@@ -181,5 +188,3 @@ function AnnonceCard({ annonce }: { annonce: Annonce }) {
     </Link>
   );
 }
-
-

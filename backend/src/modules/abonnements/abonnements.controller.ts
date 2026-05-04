@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+﻿import { Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { prisma } from '../../config/database';
 import { getPaymentProvider } from '../../services/payment/payment.service';
@@ -118,6 +118,61 @@ async function confirmerAbonnement(referenceOperateur: string, referenceInterne:
   return result;
 }
 
+export const confirmerKkiapay = async (req: AuthRequest, res: Response) => {
+  const { transactionId } = req.body;
+  const userId = req.user!.id;
+
+  if (!transactionId) return res.status(400).json({ error: 'transactionId requis' });
+
+  try {
+    const existing = await prisma.abonnement.findFirst({
+      where: { referenceOp: transactionId, statut: 'ACTIF' },
+    });
+    if (existing) return res.status(409).json({ error: 'Transaction deja utilisee' });
+
+    const now = new Date();
+    const fin = new Date(now);
+    fin.setMonth(fin.getMonth() + 1);
+
+    const abonnement = await prisma.abonnement.create({
+      data: {
+        utilisateurId: userId,
+        operateur: 'MOMO',
+        montant: 300,
+        referenceOp: transactionId,
+        statut: 'ACTIF',
+        datePaiement: now,
+        periodeDebut: now,
+        periodeFin: fin,
+      },
+      include: { utilisateur: { select: { email: true, nom: true, prenom: true } } },
+    });
+
+    if (abonnement.utilisateur) {
+      sendPaymentConfirmationEmail(
+        abonnement.utilisateur.email,
+        abonnement.utilisateur.prenom,
+        'KKIAPAY',
+        fin
+      ).catch(() => {});
+    }
+
+    console.log('[KKiaPay] Abonnement active pour', userId, '- transaction', transactionId);
+
+    return res.json({
+      message: 'Abonnement active avec succes',
+      abonnement: {
+        id: abonnement.id,
+        statut: abonnement.statut,
+        periodeDebut: abonnement.periodeDebut,
+        periodeFin: abonnement.periodeFin,
+      },
+    });
+  } catch (err) {
+    console.error('[confirmerKkiapay]', err);
+    return res.status(500).json({ error: 'Erreur serveur' });
+  }
+};
 export const webhookMoMo = async (req: Request, res: Response) => {
   try {
     const provider = getPaymentProvider('MOMO');

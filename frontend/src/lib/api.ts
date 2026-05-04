@@ -69,6 +69,8 @@ export const abonnementsApi = {
     api.post('/abonnements/initier', { operateur, telephone }),
   statut: () => api.get('/abonnements/statut'),
   historique: () => api.get('/abonnements/historique'),
+  confirmerKkiapay: (transactionId: string) =>
+    api.post('/abonnements/confirmer-kkiapay', { transactionId }),
 };
 
 export const messagerieApi = {
