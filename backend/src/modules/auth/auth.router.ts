@@ -14,6 +14,8 @@ authRouter.post(
     body('email').isEmail().withMessage('Email invalide'),
     body('motDePasse').isLength({ min: 8 }).withMessage('Mot de passe min 8 caracteres'),
     body('sexe').isIn(['HOMME', 'FEMME']).withMessage('Sexe requis'),
+    body('typeCompte').isIn(['ETUDIANT', 'AUTRE']).withMessage('Type de compte invalide'),
+    body('profession').if(body('typeCompte').equals('AUTRE')).notEmpty().withMessage('Profession requise'),
   ],
   validate,
   register

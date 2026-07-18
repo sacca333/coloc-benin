@@ -38,7 +38,10 @@ export function photoUrl(path: string | null | undefined): string | null {
 export const authApi = {
   register: (data: {
     nom: string; prenom: string; email: string; motDePasse: string; sexe: string;
-    telephone?: string; ville?: string; universite?: string; filiere?: string; niveau?: string;
+    typeCompte: 'ETUDIANT' | 'AUTRE';
+    profession?: string;
+    telephone?: string; ville?: string;
+    universite?: string; filiere?: string; niveau?: string;
   }) => api.post('/auth/register', data),
   login: (email: string, motDePasse: string) =>
     api.post<{ token: string; utilisateur: any; abonnementActif: boolean }>('/auth/login', { email, motDePasse }),

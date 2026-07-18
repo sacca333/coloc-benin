@@ -9,7 +9,7 @@ datasource db {
 
 enum TypeCompte {
   ETUDIANT
-  PROPRIETAIRE
+  AUTRE
   ADMIN
 }
 
@@ -68,6 +68,9 @@ model Utilisateur {
   filiere          String?
   niveau           String?
   typeCompte       TypeCompte          @default(ETUDIANT)
+
+  profession       String?             // pour les non-étudiants
+
   photo            String?
   emailVerifie     Boolean             @default(false)
   tokenVerifEmail  String?

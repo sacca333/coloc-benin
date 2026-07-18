@@ -8,7 +8,12 @@ import { AuthRequest } from '../../middlewares/auth.middleware';
 
 export const register = async (req: Request, res: Response) => {
   try {
-    const { nom, prenom, email, motDePasse, telephone, sexe, ville, universite, filiere, niveau } = req.body;
+    const { nom, prenom, email, motDePasse, telephone, sexe, typeCompte, profession, ville, universite, filiere, niveau } = req.body;
+
+    // Vérification métier
+    if (typeCompte === 'AUTRE' && !profession?.trim()) {
+      return res.status(400).json({ error: 'La profession est requise pour les non-étudiants' });
+    }
 
     const existant = await prisma.utilisateur.findUnique({ where: { email } });
     if (existant) return res.status(409).json({ error: 'Cet email est déjà utilisé' });
@@ -16,10 +21,27 @@ export const register = async (req: Request, res: Response) => {
     const hash = await bcrypt.hash(motDePasse, 12);
     const token = uuidv4();
 
+    // On ne sauvegarde que les champs pertinents selon le type
+    const data: any = {
+      nom, prenom, email, motDePasse: hash,
+      telephone, sexe, typeCompte, ville,
+      tokenVerifEmail: token,
+    };
+
+    if (typeCompte === 'ETUDIANT') {
+      data.universite = universite;
+      data.filiere = filiere;
+      data.niveau = niveau;
+    } else {
+      data.profession = profession;
+    }
+
     const utilisateur = await prisma.utilisateur.create({
-      data: { nom, prenom, email, motDePasse: hash, telephone, sexe, ville, universite, filiere, niveau, tokenVerifEmail: token },
+      data,
       select: { id: true, nom: true, prenom: true, email: true },
     });
+
+    // ... reste inchangé
 
     try {
       await sendVerificationEmail(email, nom, token);
