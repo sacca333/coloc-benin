@@ -16,6 +16,8 @@ export default function AnnonceDetailPage() {
   const [photoIdx, setPhotoIdx] = useState(0);
   const [messageEnvoi, setMessageEnvoi] = useState('');
   const [messageSent, setMessageSent] = useState(false);
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     annoncesApi.getById(id).then(r => setAnnonce(r.data)).finally(() => setLoading(false));
@@ -27,11 +29,27 @@ export default function AnnonceDetailPage() {
       await messagerieApi.envoyer(annonce.proprietaire.id, messageEnvoi);
       setMessageSent(true);
       router.push(`/messagerie/${annonce.proprietaire.id}`);
-    } catch {}
+    } catch { }
   };
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center text-gray-400">Chargement...</div>;
-  if (!annonce) return <div className="min-h-screen flex items-center justify-center text-red-400">Annonce introuvable</div>;
+  const handleSupprimer = async () => {
+    if (!annonce) return;
+    setDeleting(true);
+    try {
+      await annoncesApi.supprimer(annonce.id);
+      router.push('/mes-annonces');
+    } catch {
+      setDeleting(false);
+      setShowConfirmDelete(false);
+    }
+  };
+
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center text-gray-400">Chargement...</div>
+  );
+  if (!annonce) return (
+    <div className="min-h-screen flex items-center justify-center text-red-400">Annonce introuvable</div>
+  );
 
   const isOwner = user?.id === annonce.proprietaire.id;
 
@@ -118,8 +136,8 @@ export default function AnnonceDetailPage() {
                 {annonce.proprietaire.photo
                   ? <img src={annonce.proprietaire.photo} alt="" className="w-10 h-10 rounded-full object-cover" />
                   : <span className="w-10 h-10 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center text-sm font-medium">
-                      {annonce.proprietaire.prenom[0]}{annonce.proprietaire.nom[0]}
-                    </span>
+                    {annonce.proprietaire.prenom[0]}{annonce.proprietaire.nom[0]}
+                  </span>
                 }
                 <div>
                   <p className="font-medium text-sm">{annonce.proprietaire.prenom} {annonce.proprietaire.nom}</p>
@@ -138,7 +156,11 @@ export default function AnnonceDetailPage() {
                         className="input resize-none text-sm w-full mb-2"
                         placeholder="Bonjour, je suis intéressé(e) par votre annonce..."
                       />
-                      <button onClick={handleContacter} disabled={!messageEnvoi.trim()} className="btn-primary w-full text-sm">
+                      <button
+                        onClick={handleContacter}
+                        disabled={!messageEnvoi.trim()}
+                        className="btn-primary w-full text-sm"
+                      >
                         Envoyer un message
                       </button>
                     </div>
@@ -155,9 +177,20 @@ export default function AnnonceDetailPage() {
               )}
 
               {isOwner && (
-                <Link href={`/annonces/${annonce.id}/modifier`} className="btn-outline block text-center text-sm">
-                  Modifier mon annonce
-                </Link>
+                <div className="space-y-2">
+                  <Link
+                    href={`/annonces/${annonce.id}/modifier`}
+                    className="btn-outline block text-center text-sm"
+                  >
+                    ✏️ Modifier mon annonce
+                  </Link>
+                  <button
+                    onClick={() => setShowConfirmDelete(true)}
+                    className="w-full py-2 px-4 rounded-lg border border-red-200 text-red-600 text-sm font-medium hover:bg-red-50 transition-colors"
+                  >
+                    🗑️ Supprimer l'annonce
+                  </button>
+                </div>
               )}
             </div>
 
@@ -168,6 +201,34 @@ export default function AnnonceDetailPage() {
           </div>
         </div>
       </main>
+
+      {/* Modal confirmation suppression */}
+      {showConfirmDelete && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+          <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl">
+            <h3 className="text-base font-semibold text-gray-900 mb-2">Supprimer l'annonce ?</h3>
+            <p className="text-sm text-gray-500 mb-5">
+              Cette action est irréversible. L'annonce ne sera plus visible par les autres utilisateurs.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowConfirmDelete(false)}
+                disabled={deleting}
+                className="btn-outline flex-1 text-sm"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={handleSupprimer}
+                disabled={deleting}
+                className="flex-1 py-2 px-4 rounded-lg bg-red-500 hover:bg-red-600 text-white text-sm font-medium transition-colors disabled:opacity-50"
+              >
+                {deleting ? 'Suppression...' : 'Oui, supprimer'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
