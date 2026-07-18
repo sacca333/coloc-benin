@@ -22,16 +22,26 @@ export function useAuthInit() {
     }
     authApi.me()
       .then((res) => {
-        // On a le user mais on recharge aussi le statut d'abonnement
         import('../lib/api').then(({ abonnementsApi }) => {
           abonnementsApi.statut().then((r) => {
             login(token, res.data, r.data.actif);
           }).catch(() => login(token, res.data, false));
         });
       })
-      .catch(() => {
-        logout();
-        useAuthStore.setState({ isLoading: false });
+      .catch((err) => {
+        // Ne déconnecter QUE si le token est vraiment invalide (401)
+        // Ignorer les erreurs réseau ou serveur (500, timeout...)
+        if (err?.response?.status === 401) {
+          logout();
+        } else {
+          // Réseau ou serveur HS : garder l'utilisateur connecté avec les infos du token
+          const payload = JSON.parse(atob(token.split('.')[1]));
+          useAuthStore.setState({
+            token,
+            user: { id: payload.id, email: payload.email, typeCompte: payload.typeCompte } as any,
+            isLoading: false,
+          });
+        }
       });
   }, []);
 }

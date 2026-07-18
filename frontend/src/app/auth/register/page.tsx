@@ -12,6 +12,7 @@ const schema = z.object({
   prenom: z.string().min(2, 'Prenom requis'),
   email: z.string().email('Email invalide'),
   motDePasse: z.string().min(8, 'Minimum 8 caracteres'),
+  sexe: z.enum(['HOMME', 'FEMME'], { errorMap: () => ({ message: 'Sexe requis' }) }),
   telephone: z.string().optional(),
   ville: z.string().optional(),
   universite: z.string().optional(),
@@ -37,7 +38,7 @@ export default function RegisterPage() {
       await authApi.register(data);
       setSuccess(true);
     } catch (err: any) {
-      setServerError(err.response?.data?.error || 'Erreur lors de l inscription');
+      setServerError(err.response?.data?.error || 'Erreur lors de l\'inscription');
     }
   };
 
@@ -120,6 +121,15 @@ export default function RegisterPage() {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Téléphone (optionnel)</label>
               <input {...register('telephone')} className="input" placeholder="+229 97000000" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Sexe</label>
+              <select {...register('sexe')} className="input">
+                <option value="">Choisir...</option>
+                <option value="HOMME">Homme</option>
+                <option value="FEMME">Femme</option>
+              </select>
+              {errors.sexe && <p className="text-xs text-red-500 mt-1">{errors.sexe.message}</p>}
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>

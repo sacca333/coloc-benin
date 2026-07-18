@@ -50,6 +50,11 @@ enum StatutColocataire {
   PARTI
 }
 
+enum Sexe {
+  HOMME
+  FEMME
+}
+
 model Utilisateur {
   id               String              @id @default(uuid())
   nom              String
@@ -57,6 +62,7 @@ model Utilisateur {
   email            String              @unique
   telephone        String?
   motDePasse       String
+  sexe             Sexe                @default(HOMME)
   ville            String?
   universite       String?
   filiere          String?
@@ -91,6 +97,7 @@ model Annonce {
   ville           String
   loyerTotal      Int
   nbPlaces        Int
+  placesRestantes Int @default(0)
   nbColocataires  Int?
   caution         Int?
   description     String?

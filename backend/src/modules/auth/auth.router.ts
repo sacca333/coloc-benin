@@ -13,6 +13,7 @@ authRouter.post(
     body('prenom').trim().notEmpty().withMessage('Prenom requis'),
     body('email').isEmail().withMessage('Email invalide'),
     body('motDePasse').isLength({ min: 8 }).withMessage('Mot de passe min 8 caracteres'),
+    body('sexe').isIn(['HOMME', 'FEMME']).withMessage('Sexe requis'),
   ],
   validate,
   register

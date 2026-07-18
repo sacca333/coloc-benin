@@ -151,6 +151,24 @@ export default function AnnoncesPage() {
   );
 }
 
+
+function tempsEcoule(date: string): string {
+  const secondes = Math.floor((Date.now() - new Date(date).getTime()) / 1000);
+  if (secondes < 60) return "À l'instant";
+  const minutes = Math.floor(secondes / 60);
+  if (minutes < 60) return `Il y a ${minutes} min`;
+  const heures = Math.floor(minutes / 60);
+  if (heures < 24) return `Il y a ${heures} h`;
+  const jours = Math.floor(heures / 24);
+  if (jours < 7) return `Il y a ${jours} jour${jours > 1 ? 's' : ''}`;
+  const semaines = Math.floor(jours / 7);
+  if (semaines < 4) return `Il y a ${semaines} semaine${semaines > 1 ? 's' : ''}`;
+  const mois = Math.floor(jours / 30);
+  if (mois < 12) return `Il y a ${mois} mois`;
+  return `Il y a ${Math.floor(mois / 12)} an${Math.floor(mois / 12) > 1 ? 's' : ''}`;
+}
+
+
 function AnnonceCard({ annonce }: { annonce: Annonce }) {
   return (
     <Link href={`/annonces/${annonce.id}`} className="card hover:shadow-md transition-all duration-200 block hover:-translate-y-0.5">
@@ -183,6 +201,11 @@ function AnnonceCard({ annonce }: { annonce: Annonce }) {
               {annonce.equipements.length > 4 && <span className="text-xs text-gray-400">+{annonce.equipements.length - 4}</span>}
             </div>
           )}
+
+
+          {/* ← Ajoutez cette ligne */}
+          <p className="text-xs text-gray-400 mt-1.5">🕐 {tempsEcoule(annonce.createdAt)}</p>
+
         </div>
       </div>
     </Link>

@@ -1,4 +1,4 @@
-import { Router } from 'express';
+﻿import { Router } from 'express';
 import { authenticate, requireAdmin, AuthRequest } from '../../middlewares/auth.middleware';
 import { prisma } from '../../config/database';
 
@@ -105,9 +105,23 @@ adminRouter.put('/utilisateurs/:id/promouvoir', async (req, res) => {
 
 adminRouter.delete('/utilisateurs/:id', async (req, res) => {
   try {
-    await prisma.utilisateur.delete({ where: { id: req.params.id } });
+    const id = req.params.id;
+
+    // Supprimer les données liées dans l'ordre pour respecter les contraintes FK
+    await prisma.notification.deleteMany({ where: { utilisateurId: id } });
+    await prisma.message.deleteMany({ where: { OR: [{ expediteurId: id }, { destinataireId: id }] } });
+    await prisma.abonnement.deleteMany({ where: { utilisateurId: id } });
+    await prisma.signalement.deleteMany({ where: { signaleurId: id } });
+    await prisma.colocataire.deleteMany({ where: { utilisateurId: id } });
+    await prisma.demandeColocation.deleteMany({ where: { demandeurId: id } });
+    await prisma.annonce.deleteMany({ where: { proprietaireId: id } });
+    await prisma.utilisateur.delete({ where: { id } });
+
     res.json({ message: 'Utilisateur supprime' });
-  } catch (error) { res.status(500).json({ error: 'Erreur serveur' }); }
+  } catch (error) {
+    console.error('[admin/utilisateurs DELETE]', error);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
 });
 
 adminRouter.get('/annonces', async (req, res) => {

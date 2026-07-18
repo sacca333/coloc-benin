@@ -82,7 +82,7 @@ export default function HomePage() {
                   </Link>
                 ) : (
                   <Link href="/auth/register" className="px-6 sm:px-8 py-2.5 sm:py-3 text-sm sm:text-base font-semibold rounded-2xl text-white border-2 border-white/60 hover:bg-white/20 transition-all duration-200 backdrop-blur-sm active:scale-95">
-                    Creer un compte - 300 FCFA/mois
+                    Créer un compte - 300 FCFA/mois
                   </Link>
                 )}
               </div>

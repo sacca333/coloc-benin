@@ -73,7 +73,7 @@ export const creerAnnonce = async (req: AuthRequest, res: Response) => {
       if (utilisateurs.length > 0) {
         await prisma.notification.createMany({
           data: utilisateurs.map(u => ({
-            userId: u.id,
+            utilisateurId: u.id,
             type: 'NOUVELLE_ANNONCE' as const,
             titre: 'Nouvelle annonce dans votre ville',
             message: 'Nouvelle annonce de colocation disponible a ' + ville,

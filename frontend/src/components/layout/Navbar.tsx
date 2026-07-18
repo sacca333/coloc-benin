@@ -198,7 +198,7 @@ export function Navbar() {
       <nav className="sticky top-0 z-40 bg-sky-800 border-b border-sky-700 shadow-sm">
         <div className="max-w-6xl mx-auto px-4 flex items-center justify-between h-14">
           <Link href="/" className="flex items-center gap-2">
-            <img src="/logo.png" alt="logo" className="w-8 h-8 rounded-xl object-cover" />
+            <img src="/logo.png" alt="logo" className="w-14 h-14 rounded-xl object-cover" />
             <span className="font-bold text-lg">
               <span className="text-green-400">Coloc</span>
               <span className="text-yellow-400">Bénin</span>
@@ -219,7 +219,7 @@ export function Navbar() {
       <aside className="hidden md:flex flex-col fixed left-0 top-0 h-full w-60 bg-sky-900 z-40 py-6">
         <div className="px-5 mb-8">
           <Link href="/dashboard" className="flex items-center gap-2">
-            <img src="/logo.png" alt="logo" className="w-8 h-8 rounded-xl object-cover" />
+            <img src="/logo.png" alt="logo" className="w-14 h-14 rounded-xl object-cover" />
             <span className="font-bold text-lg">
               <span className="text-green-400">Coloc</span>
               <span className="text-yellow-400">Bénin</span>
@@ -294,8 +294,8 @@ export function Navbar() {
               className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-sky-800 transition-colors"
             >
               {userPhoto
-                ? <img src={userPhoto} alt="" className="w-8 h-8 rounded-full object-cover flex-shrink-0" />
-                : <span className="w-8 h-8 rounded-full bg-sky-700 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">
+                ? <img src={userPhoto} alt="" className="w-9 h-9 rounded-full object-cover flex-shrink-0" />
+                : <span className="w-9 h-9 rounded-full bg-sky-700 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">
                   {user.prenom[0]}{user.nom[0]}
                 </span>
               }
@@ -339,7 +339,7 @@ export function Navbar() {
         </button>
 
         <Link href="/dashboard" className="flex items-center gap-2">
-          <img src="/logo.png" alt="logo" className="w-7 h-7 rounded-lg object-cover" />
+          <img src="/logo.png" alt="logo" className="w-9 h-9 rounded-lg object-cover" />
           <span className="font-bold text-base">
             <span className="text-green-400">Coloc</span>
             <span className="text-yellow-400">Bénin</span>
