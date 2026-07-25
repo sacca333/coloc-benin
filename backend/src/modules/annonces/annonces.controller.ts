@@ -3,7 +3,7 @@ import { prisma } from '../../config/database';
 import { AuthRequest } from '../../middlewares/auth.middleware';
 
 export const listerAnnonces = async (req: Request, res: Response) => {
-  const { ville, typeAnnonce, budgetMax, nbPlaces, equipements } = req.query;
+  const { ville, typeAnnonce, budgetMax, nbPlaces, equipements, sexe } = req.query;
   const where: any = { statut: 'ACTIVE' };
   if (ville) where.ville = { contains: String(ville), mode: 'insensitive' };
   if (typeAnnonce) where.type = typeAnnonce;
@@ -13,10 +13,11 @@ export const listerAnnonces = async (req: Request, res: Response) => {
     const eqs = String(equipements).split(',');
     where.equipements = { hasEvery: eqs };
   }
+  if (sexe) where.proprietaire = { sexe: String(sexe) };
   const annonces = await prisma.annonce.findMany({
     where,
     include: {
-      proprietaire: { select: { id: true, nom: true, prenom: true, photo: true } },
+      proprietaire: { select: { id: true, nom: true, prenom: true, photo: true, sexe: true } },
     },
     orderBy: { createdAt: 'desc' },
     take: 50,
@@ -28,7 +29,7 @@ export const getAnnonce = async (req: Request, res: Response) => {
   const annonce = await prisma.annonce.findUnique({
     where: { id: req.params.id },
     include: {
-      proprietaire: { select: { id: true, nom: true, prenom: true, photo: true, telephone: true } },
+      proprietaire: { select: { id: true, nom: true, prenom: true, photo: true, sexe: true } },
     },
   });
   if (!annonce) return res.status(404).json({ error: 'Annonce introuvable' });

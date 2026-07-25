@@ -2,15 +2,14 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRequireAuth } from '../../hooks/useAuth';
-import { colocationsApi, abonnementsApi, annoncesApi } from '../../lib/api';
-import { Colocation, Annonce } from '../../types';
+import { sauvegardesApi, abonnementsApi, annoncesApi } from '../../lib/api';
+import { Annonce } from '../../types';
 import { Navbar } from '../../components/layout/Navbar';
 import clsx from 'clsx';
 
 export default function DashboardPage() {
   const { user, isLoading } = useRequireAuth();
-  const [colocations, setColocations] = useState<Colocation[]>([]);
-  const [annonces, setAnnonces] = useState<Annonce[]>([]);
+  const [sauvegardes, setSauvegardes] = useState<Annonce[]>([]); const [annonces, setAnnonces] = useState<Annonce[]>([]);
   const [abonnement, setAbonnement] = useState<{ actif: boolean; abonnement?: { periodeFin?: string } } | null>(null);
   const [loadingData, setLoadingData] = useState(true);
 
@@ -18,12 +17,13 @@ export default function DashboardPage() {
     if (!user) return;
     const fetchData = async () => {
       try {
-        const [coloc, abo, ann] = await Promise.all([
-          colocationsApi.mesColocations(),
+        const [sauv, abo, ann] = await Promise.all([
+          sauvegardesApi.lister(),
           abonnementsApi.statut(),
           annoncesApi.lister(),
         ]);
-        setColocations(coloc.data || []);
+        setSauvegardes(sauv.data || []);
+
         setAbonnement(abo.data || null);
         setAnnonces((ann.data || []).filter((a: Annonce) => a.proprietaireId === user.id));
       } catch (err: any) {
@@ -40,7 +40,6 @@ export default function DashboardPage() {
   );
   if (!user) return null;
 
-  const activeColocations = colocations.filter((c: any) => c.statut === 'ACTIF').length;
 
   return (
     <>
@@ -71,11 +70,11 @@ export default function DashboardPage() {
           <div className="bg-white rounded-xl border border-gray-100 p-6 shadow-sm hover:shadow-md transition-shadow">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Colocations actives</p>
-                <p className="text-3xl font-bold text-gray-900 mt-2">{activeColocations}</p>
-                <p className="text-xs text-gray-500 mt-2">Total: {colocations.length} colocations</p>
+                <p className="text-sm font-medium text-gray-600">Sauvegardes</p>
+                <p className="text-3xl font-bold text-gray-900 mt-2">{sauvegardes.length}</p>
+                <Link href="/mes-sauvegardes" className="text-xs text-primary-600 hover:underline mt-2 block">Voir tout</Link>
               </div>
-              <div className="text-3xl">🤝</div>
+              <div className="text-3xl">🤍</div>
             </div>
           </div>
 
@@ -110,31 +109,33 @@ export default function DashboardPage() {
         {/* Colocations */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-gray-900">Vos colocations</h2>
-            <Link href="/colocations" className="text-sm text-primary-600 hover:underline font-medium">Voir tout</Link>
+            <h2 className="text-xl font-bold text-gray-900">Vos sauvegardes</h2>
+            <Link href="/mes-sauvegardes" className="text-sm text-primary-600 hover:underline font-medium">Voir tout</Link>
           </div>
-          {colocations.length === 0 ? (
+          {sauvegardes.length === 0 ? (
             <div className="bg-white rounded-xl border border-gray-100 p-12 text-center">
-              <div className="text-4xl mb-3">🏠</div>
-              <p className="font-medium text-gray-900">Aucune colocation</p>
-              <p className="text-sm text-gray-500 mt-1">Creez ou rejoignez une colocation pour commencer</p>
-              <Link href="/colocations" className="inline-block mt-4 px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium">
-                Creer une colocation
+              <div className="text-4xl mb-3">🤍</div>
+              <p className="font-medium text-gray-900">Aucune sauvegarde</p>
+              <p className="text-sm text-gray-500 mt-1">Sauvegardez des annonces pour les retrouver ici</p>
+              <Link href="/annonces" className="inline-block mt-4 px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium">
+                Parcourir les annonces
               </Link>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {colocations.slice(0, 4).map((coloc: any) => (
-                <Link key={coloc.id} href={`/colocations/${coloc.id}`} className="bg-white rounded-xl border border-gray-100 p-4 hover:shadow-md transition-all hover:-translate-y-0.5 block">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-gray-900 truncate">{coloc.adresse || 'Adresse non specifiee'}</h3>
-                      <p className="text-sm text-gray-600">{coloc.nbColocataires || 0} colocataire{(coloc.nbColocataires || 0) !== 1 ? 's' : ''}</p>
-                      <p className="text-xs text-gray-500 mt-1">{coloc.ville || 'Ville'}</p>
+              {sauvegardes.slice(0, 4).map((a: Annonce) => (
+                <Link key={a.id} href={`/annonces/${a.id}`} className="bg-white rounded-xl border border-gray-100 p-4 hover:shadow-md transition-all hover:-translate-y-0.5 block">
+                  <div className="flex gap-3">
+                    <div className="w-16 h-14 rounded-lg bg-gray-100 flex-shrink-0 overflow-hidden">
+                      {a.photos?.[0]
+                        ? <img src={a.photos[0]} alt="" className="w-full h-full object-cover" />
+                        : <div className="w-full h-full flex items-center justify-center text-2xl">🏠</div>
+                      }
                     </div>
-                    <div className="text-right ml-4 flex-shrink-0">
-                      <p className="font-semibold text-gray-900">{(coloc.montantTotal || 0).toLocaleString()} FCFA</p>
-                      <p className="text-xs text-gray-500">Loyer</p>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-gray-900 text-sm truncate">{a.quartier || a.adresse || a.ville}</p>
+                      <p className="text-xs text-gray-500">{a.ville} · {a.nbPlaces} place{a.nbPlaces > 1 ? 's' : ''}</p>
+                      <p className="font-bold text-gray-900 text-sm mt-1">{a.loyerTotal.toLocaleString()} FCFA</p>
                     </div>
                   </div>
                 </Link>

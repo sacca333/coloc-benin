@@ -4,6 +4,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import path from 'path';
+import { sauvegardesRouter } from './modules/sauvegardes/sauvegardes.router';
 
 import { authRouter } from './modules/auth/auth.router';
 import { usersRouter } from './modules/users/users.router';
@@ -92,6 +93,7 @@ app.use('/api/admin', adminRouter);
 app.use('/api/demandes-colocation', demandesColocationRouter);
 app.use('/api/notifications', notificationsRouter);
 app.use('/api/blocages', blocagesRouter);
+app.use('/api/sauvegardes', sauvegardesRouter);
 
 // â”€â”€ Health check â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.get('/health', (_req, res) => {

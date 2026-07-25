@@ -50,6 +50,19 @@ enum StatutColocataire {
   PARTI
 }
 
+model Sauvegarde {
+  id          String      @id @default(uuid())
+  utilisateurId String
+  utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id])
+  annonceId   String
+  annonce     Annonce     @relation(fields: [annonceId], references: [id])
+  createdAt   DateTime    @default(now())
+
+  @@unique([utilisateurId, annonceId])
+  @@map("sauvegardes")
+}
+
+
 enum Sexe {
   HOMME
   FEMME
@@ -87,6 +100,8 @@ model Utilisateur {
   demandesEnvoyees  DemandeColocation[] @relation("Demandeur")
   signalements      Signalement[]       @relation("Signaleur")
 
+  sauvegardes   Sauvegarde[]
+
   @@map("utilisateurs")
 }
 
@@ -112,6 +127,8 @@ model Annonce {
 
   colocation   Colocation?
   signalements Signalement[]
+
+  sauvegardes   Sauvegarde[]
 
   @@map("annonces")
 }

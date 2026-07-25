@@ -1,6 +1,7 @@
 ﻿'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { sauvegardesApi } from '../../lib/api';
 import { annoncesApi } from '../../lib/api';
 import { Annonce, FiltresAnnonce } from '../../types';
 import { Navbar } from '../../components/layout/Navbar';
@@ -50,6 +51,9 @@ export default function AnnoncesPage() {
   const handleFilterChange = (filter: string) => {
     setActiveFilter(filter || null);
     setShowFilterPanel(!!filter);
+    if (!filter) {
+      setFiltres({});
+    }
   };
 
   return (
@@ -75,6 +79,20 @@ export default function AnnoncesPage() {
           </Link>
 
           <SearchBar onSearch={setSearchQuery} onFilterChange={handleFilterChange} />
+
+          {(Object.keys(filtres).length > 0 || searchQuery) && (
+            <button
+              onClick={() => {
+                setFiltres({});
+                setSearchQuery('');
+                setActiveFilter(null);
+                setShowFilterPanel(false);
+              }}
+              className="mt-2 text-xs text-sky-700 hover:underline font-medium"
+            >
+              ✕ Réinitialiser les filtres
+            </button>
+          )}
         </div>
 
         {showFilterPanel && (
@@ -128,6 +146,34 @@ export default function AnnoncesPage() {
                 </div>
               </div>
             )}
+
+            {activeFilter === 'sexe' && (
+              <div>
+                <label className="text-xs font-semibold text-gray-500 mb-2 block uppercase tracking-wide">
+                  Sexe du propriétaire
+                </label>
+                <div className="flex gap-2">
+                  {[
+                    { val: 'HOMME', label: '👨 Homme' },
+                    { val: 'FEMME', label: '👩 Femme' },
+                  ].map(s => (
+                    <button
+                      key={s.val}
+                      onClick={() => updateFiltre('sexe', filtres.sexe === s.val ? undefined : s.val)}
+                      className={clsx(
+                        'px-4 py-2 rounded-full text-sm border transition-all',
+                        filtres.sexe === s.val
+                          ? 'bg-violet-600 text-white border-transparent'
+                          : 'border-gray-200 text-gray-600 hover:border-violet-300'
+                      )}
+                    >
+                      {s.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
           </div>
         )}
 
@@ -170,6 +216,35 @@ function tempsEcoule(date: string): string {
 
 
 function AnnonceCard({ annonce }: { annonce: Annonce }) {
+  const { user } = useAuth();
+  const [sauvegardee, setSauvegardee] = useState(false);
+  const [loadingSave, setLoadingSave] = useState(false);
+
+  useEffect(() => {
+    if (!user) return;
+    sauvegardesApi.verifie(annonce.id)
+      .then(r => setSauvegardee(r.data.sauvegardee))
+      .catch(() => { });
+  }, [annonce.id, user]);
+
+  const handleSauvegarder = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!user || loadingSave) return;
+    setLoadingSave(true);
+    try {
+      if (sauvegardee) {
+        await sauvegardesApi.supprimer(annonce.id);
+        setSauvegardee(false);
+      } else {
+        await sauvegardesApi.sauvegarder(annonce.id);
+        setSauvegardee(true);
+      }
+    } catch { } finally {
+      setLoadingSave(false);
+    }
+  };
+
   return (
     <Link href={`/annonces/${annonce.id}`} className="card hover:shadow-md transition-all duration-200 block hover:-translate-y-0.5">
       <div className="flex gap-4">
@@ -188,9 +263,25 @@ function AnnonceCard({ annonce }: { annonce: Annonce }) {
               <h3 className="font-medium text-sm mt-1">{annonce.quartier || annonce.adresse || annonce.ville}</h3>
               <p className="text-xs text-gray-500">{annonce.ville} · {annonce.nbPlaces} place{annonce.nbPlaces > 1 ? 's' : ''}</p>
             </div>
-            <div className="text-right flex-shrink-0">
+            <div className="flex flex-col items-end gap-1 flex-shrink-0">
               <p className="font-semibold text-gray-900">{annonce.loyerTotal.toLocaleString()} FCFA</p>
               <p className="text-xs text-gray-400">/ mois</p>
+              {/* Bouton sauvegarder */}
+              {user && (
+                <button
+                  onClick={handleSauvegarder}
+                  disabled={loadingSave}
+                  className={clsx(
+                    'mt-3 flex items-center gap-1 px-2 py-1 rounded-full text-xs transition-all',
+                    sauvegardee
+                      ? 'bg-sky-800 text-white'
+                      : 'bg-blue-300 text-gray-500 hover:bg-sky-800 hover:text-white'
+                  )}
+                >
+                  {sauvegardee ? '❤️' : '🤍'}
+                  <span>{sauvegardee ? 'Sauvegardé' : 'Sauvegarder'}</span>
+                </button>
+              )}
             </div>
           </div>
           {annonce.equipements.length > 0 && (
@@ -201,11 +292,7 @@ function AnnonceCard({ annonce }: { annonce: Annonce }) {
               {annonce.equipements.length > 4 && <span className="text-xs text-gray-400">+{annonce.equipements.length - 4}</span>}
             </div>
           )}
-
-
-          {/* ← Ajoutez cette ligne */}
           <p className="text-xs text-gray-400 mt-1.5">🕐 {tempsEcoule(annonce.createdAt)}</p>
-
         </div>
       </div>
     </Link>

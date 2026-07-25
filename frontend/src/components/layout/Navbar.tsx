@@ -45,11 +45,11 @@ const NAV_LINKS = [
     ),
   },
   {
-    href: '/colocations',
-    label: 'Mes colocations',
+    href: '/mes-sauvegardes',
+    label: 'Mes sauvegardes',
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
       </svg>
     ),
   },
@@ -218,7 +218,7 @@ export function Navbar() {
       {/* ── SIDEBAR DESKTOP ──────────────────────────────────── */}
       <aside className="hidden md:flex flex-col fixed left-0 top-0 h-full w-60 bg-sky-900 z-40 py-6">
         <div className="px-5 mb-8">
-          <Link href="/dashboard" className="flex items-center gap-2">
+          <Link href="/annonces" className="flex items-center gap-2">
             <img src="/logo.png" alt="logo" className="w-14 h-14 rounded-xl object-cover" />
             <span className="font-bold text-lg">
               <span className="text-green-400">Coloc</span>
@@ -338,7 +338,7 @@ export function Navbar() {
           <span className="block w-5 h-0.5 bg-sky-300" />
         </button>
 
-        <Link href="/dashboard" className="flex items-center gap-2">
+        <Link href="/annonces" className="flex items-center gap-2">
           <img src="/logo.png" alt="logo" className="w-9 h-9 rounded-lg object-cover" />
           <span className="font-bold text-base">
             <span className="text-green-400">Coloc</span>

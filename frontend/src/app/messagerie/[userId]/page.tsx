@@ -44,7 +44,7 @@ export default function ConversationPage() {
         try {
           const res = await api.get(`/users/${userId}`);
           setInterlocuteurInfo(res.data);
-        } catch {}
+        } catch { }
       }
     } catch { setLoading(false); }
   };
@@ -59,14 +59,14 @@ export default function ConversationPage() {
         recues.data.find((d: DemandeColocation) => d.expediteurId === userId) ||
         envoyees.data.find((d: DemandeColocation) => d.destinataireId === userId);
       setDemandeEnCours(demande || null);
-    } catch {}
+    } catch { }
   };
 
   const chargerBlocage = async () => {
     try {
       const { data } = await blocagesApi.verifie(userId);
       setBlocageInfo(data);
-    } catch {}
+    } catch { }
   };
 
   useEffect(() => {
@@ -212,8 +212,8 @@ export default function ConversationPage() {
         {interlocuteurPhoto
           ? <img src={interlocuteurPhoto} alt="" className="w-9 h-9 rounded-full object-cover flex-shrink-0 border-2 border-sky-600" />
           : <span className="w-9 h-9 rounded-full bg-sky-600 text-white flex items-center justify-center text-sm font-semibold flex-shrink-0">
-              {interlocuteurInfo ? `${interlocuteurInfo.prenom[0]}${interlocuteurInfo.nom[0]}` : '?'}
-            </span>
+            {interlocuteurInfo ? `${interlocuteurInfo.prenom[0]}${interlocuteurInfo.nom[0]}` : '?'}
+          </span>
         }
 
         <div className="flex-1 min-w-0">
@@ -223,19 +223,6 @@ export default function ConversationPage() {
           <p className="text-xs text-sky-300">En ligne</p>
         </div>
 
-        {/* Bouton colocation */}
-        {!demandeEnCours && !blocageInfo.jaiBloque && !blocageInfo.mEstBloque && (
-          <button onClick={() => setModalColoc(true)}
-            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-sky-700 hover:bg-sky-600 text-white text-xs font-medium transition-colors">
-            <span>🏠</span> Colocation
-          </button>
-        )}
-
-        {demandeEnvoyeeParMoi && (
-          <span className="hidden sm:flex items-center gap-1 px-3 py-1.5 rounded-xl bg-amber-500/20 text-amber-300 text-xs font-medium">
-            ⏳ Demande envoyee
-          </span>
-        )}
 
         {/* Bouton 3 points */}
         <div className="relative" ref={optionsRef}>
@@ -248,16 +235,7 @@ export default function ConversationPage() {
 
           {optionsOpen && (
             <div className="absolute right-0 top-11 w-56 bg-white border border-gray-100 rounded-2xl py-2 shadow-xl z-50">
-              {!demandeEnCours && !blocageInfo.jaiBloque && !blocageInfo.mEstBloque && (
-                <button onClick={() => { setModalColoc(true); setOptionsOpen(false); }}
-                  className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 text-left">
-                  <span>🏠</span>
-                  <div>
-                    <p className="font-medium">Entrer en colocation</p>
-                    <p className="text-xs text-gray-400">Proposer une colocation</p>
-                  </div>
-                </button>
-              )}
+
               <button onClick={() => { setOptionsOpen(false); blocageInfo.jaiBloque ? handleDebloquer() : setModalBlocage(true); }}
                 className="w-full flex items-center gap-3 px-4 py-3 text-sm text-red-500 hover:bg-red-50 text-left">
                 <span>🚫</span>
@@ -324,8 +302,8 @@ export default function ConversationPage() {
                 interlocuteurPhoto
                   ? <img src={interlocuteurPhoto} alt="" className="w-6 h-6 rounded-full object-cover flex-shrink-0 mb-1" />
                   : <span className="w-6 h-6 rounded-full bg-sky-600 text-white flex items-center justify-center text-xs flex-shrink-0 mb-1">
-                      {interlocuteurInfo?.prenom?.[0] || '?'}
-                    </span>
+                    {interlocuteurInfo?.prenom?.[0] || '?'}
+                  </span>
               )}
               <div className={clsx(
                 'max-w-xs md:max-w-sm rounded-2xl overflow-hidden',
@@ -336,7 +314,7 @@ export default function ConversationPage() {
                   isVid
                     ? <video src={`http://localhost:4000${msg.media}`} controls className="w-full max-h-64 object-cover" />
                     : <img src={`http://localhost:4000${msg.media}`} alt="media" className="w-full max-h-64 object-cover cursor-pointer"
-                        onClick={() => window.open(`http://localhost:4000${msg.media}`, '_blank')} />
+                      onClick={() => window.open(`http://localhost:4000${msg.media}`, '_blank')} />
                 )}
                 {!hasMedia && <p className="text-sm">{msg.contenu}</p>}
                 <p className={clsx('text-xs mt-1', hasMedia ? 'px-3 pb-2' : '', isMe ? 'text-sky-200' : 'text-gray-400')}>

@@ -7,6 +7,7 @@ const CHIPS = [
   { key: 'type', label: '🏠 Type' },
   { key: 'budget', label: '💰 Budget' },
   { key: 'equipements', label: '✨ Equipements' },
+  { key: 'sexe', label: '👤 Sexe' },
 ];
 
 interface SearchBarProps {
@@ -31,17 +32,16 @@ export function SearchBar({ onSearch, onFilterChange }: SearchBarProps) {
       <div
         className="flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300"
         style={{
-          background: focused ? '#fff' : '#F5F4FF',
+          background: focused ? '#fff' : '#F5F5F5',
           boxShadow: focused
-            ? '0 0 0 2px #7B61FF, 0 4px 20px rgba(123, 97, 255, 0.15)'
-            : '0 2px 12px rgba(0,0,0,0.06)',
+            ? '0 0 0 2px #075985, 0 4px 20px rgba(7, 89, 133, 0.15)' : '0 2px 12px rgba(0,0,0,0.06)',
         }}
       >
         {/* Icone recherche */}
         <svg
           viewBox="0 0 24 24"
           fill="none"
-          stroke={focused ? '#7B61FF' : '#9CA3AF'}
+          stroke={focused ? '#075985' : '#9CA3AF'}
           strokeWidth={2}
           className="w-5 h-5 flex-shrink-0 transition-colors duration-200"
         >
@@ -82,11 +82,11 @@ export function SearchBar({ onSearch, onFilterChange }: SearchBarProps) {
               'px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200 active:scale-95 border',
               activeChip === key
                 ? 'text-white border-transparent'
-                : 'bg-white text-gray-600 border-gray-200 hover:border-violet-300 hover:text-violet-600'
+                : 'bg-white text-gray-600 border-gray-200 hover:border-sky-700 hover:text-sky-700'
             )}
             style={activeChip === key ? {
-              background: 'linear-gradient(135deg, #7B61FF 0%, #9B85FF 100%)',
-              boxShadow: '0 2px 8px rgba(123, 97, 255, 0.3)',
+              background: '#075985',
+              boxShadow: '0 2px 8px rgba(7, 89, 133, 0.3)',
             } : {}}
           >
             {label}

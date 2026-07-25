@@ -1,6 +1,7 @@
 // ── types/index.ts ────────────────────────────────────────────────────────────
 
 export type TypeCompte = 'ETUDIANT' | 'PROPRIETAIRE' | 'ADMIN';
+export type Sexe = 'HOMME' | 'FEMME';
 export type StatutAbonnement = 'ACTIF' | 'EXPIRE' | 'EN_ATTENTE' | 'ECHEC';
 export type OperateurPaiement = 'MOMO' | 'CCASH' | 'MOOV_MONEY';
 export type TypeAnnonce = 'LOGEMENT_DISPONIBLE' | 'PLACE_EN_COLOCATION';
@@ -25,6 +26,7 @@ export interface Utilisateur {
 
 export interface Annonce {
   id: string;
+  proprietaireId: string;
   type: TypeAnnonce;
   adresse?: string;
   quartier?: string;
@@ -37,7 +39,7 @@ export interface Annonce {
   equipements: string[];
   photos: string[];
   statut: StatutAnnonce;
-  proprietaire: Pick<Utilisateur, 'id' | 'nom' | 'prenom' | 'photo'>;
+  proprietaire: Pick<Utilisateur, 'id' | 'nom' | 'prenom' | 'photo'> & { sexe?: Sexe };
   createdAt: string;
 }
 
@@ -80,6 +82,7 @@ export interface Message {
   destinataire: Pick<Utilisateur, 'id' | 'nom' | 'prenom'>;
   contenu: string;
   lu: boolean;
+  media?: string
   createdAt: string;
 }
 
@@ -97,6 +100,7 @@ export interface FiltresAnnonce {
   budgetMax?: number;
   equipements?: string[];
   nbPlaces?: number;
+  sexe?: Sexe;
 }
 
 // Filtres recherche colocataires
@@ -105,6 +109,7 @@ export interface FiltresColocataire {
   universite?: string;
   budgetMax?: number;
   niveau?: string;
+
 }
 
 export interface DemandeColocation {

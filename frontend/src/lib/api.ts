@@ -5,6 +5,13 @@ export const api = axios.create({
   headers: { 'Content-Type': 'application/json' },
 });
 
+export const sauvegardesApi = {
+  lister: () => api.get('/sauvegardes'),
+  sauvegarder: (annonceId: string) => api.post(`/sauvegardes/${annonceId}`),
+  supprimer: (annonceId: string) => api.delete(`/sauvegardes/${annonceId}`),
+  verifie: (annonceId: string) => api.get(`/sauvegardes/verifie/${annonceId}`),
+};
+
 api.interceptors.request.use((config) => {
   if (typeof window !== 'undefined') {
     const token = localStorage.getItem('coloc_token');
