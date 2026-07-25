@@ -13,8 +13,8 @@ const SLIDES = [
   {
     image: '/trouvez.jpeg',
     icon: '🔍',
-    title: 'Trouvez des colocataires',
-    desc: "Filtrez par ville, université, budget et préférences de vie. Profils d'étudiants vérifiés.",
+    title: 'Trouvez des colocataires ou une chambre à louer',
+    desc: "Filtrez par ville, université, budget, sexe préférences de vie ou autre. Profils d'étudiants vérifiés.",
     badge: 'Recherche intelligente',
   },
 
@@ -29,7 +29,7 @@ const SLIDES = [
   {
     image: '/payement.jpeg',
     icon: '📱',
-    title: 'Payez avec votre mobile',
+    title: 'Payez avec abonnemenet par Mobile Money',
     desc: "Abonnement via MTN MoMo, C'Cash ou Moov Money. Seulement 300 FCFA par mois.",
     badge: 'Paiement mobile',
   },
@@ -69,9 +69,7 @@ export default function HomePage() {
                 Trouvez votre colocation
                 <span className="block text-yellow-300 mt-1">idéale au Bénin</span>
               </h1>
-              <p className="mt-4 text-white/85 text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
-                La plateforme dédiée aux étudiants béninois pour trouver des colocataires, gérer les loyers et simplifier la vie en communauté.
-              </p>
+
               <div className="mt-6 flex items-center justify-center gap-3 flex-wrap">
                 <Link href="/annonces" className="px-6 sm:px-8 py-2.5 sm:py-3 text-sm sm:text-base font-semibold rounded-2xl text-blue-900 bg-white hover:bg-yellow-300 transition-all duration-200 shadow-lg active:scale-95">
                   Voir les annonces
@@ -89,6 +87,11 @@ export default function HomePage() {
             </div>
           </div>
         </section>
+
+
+
+
+
 
 
 
@@ -110,12 +113,10 @@ export default function HomePage() {
                   La colocation étudiante<br />
                   <span className="text-blue-300">repensée pour le Bénin</span>
                 </h2>
-                <p className="text-sm text-slate-400 leading-relaxed mb-6">
-                  Vous cherchez un colocataire de confiance à{' '}
-                  <strong className="text-slate-300">Cotonou, Abomey-Calavi ou Porto-Novo</strong> ?{' '}
-                  <strong className="text-slate-300">ColocBénin</strong> est la première plateforme
-                  dédiée aux étudiants béninois. Trouvez, discutez et emménagez — le tout depuis
-                  votre téléphone, pour seulement{' '}
+                <p className=" md:text-sm text-slate-400 leading-relaxed mb-6">
+                  Que vous soyez à <strong className="text-slate-300">Cotonou, Parakou, Abomey-Calavi</strong> ou ailleurs au Bénin,{' '}
+                  <strong className=" text-slate-300">ColocBénin</strong> vous permet de trouver votre colocation idéale ou une chambre à louer — rapidement et en toute confiance.
+                  <br />
                   <strong className="text-slate-300">300 FCFA/mois</strong>.
                 </p>
                 <Link href="/auth/register" className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-5 py-2.5 rounded-xl transition-colors">
@@ -197,8 +198,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="relative bg-blue-50 border-t border-blue-100">
-          <div className="absolute inset-0" style={{ background: 'rgba(54, 88, 160, 0.31)' }} />
+        <section className="relative bg-white border-t border-gray-100">
           <div className="max-w-2xl mx-auto px-4 py-12 text-center">
             {user ? (
               <>
@@ -215,7 +215,7 @@ export default function HomePage() {
             )}
           </div>
         </section>
-      </main>
+      </main >
       <Footer />
     </>
   );
