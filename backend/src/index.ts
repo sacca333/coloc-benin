@@ -13,7 +13,6 @@ import { colocationsRouter } from './modules/colocations/colocations.router';
 import { abonnementsRouter, webhooksRouter } from './modules/abonnements/abonnements.router';
 import { messagerieRouter } from './modules/messagerie/messagerie.router';
 import { adminRouter } from './modules/admin/admin.router';
-import { demandesColocationRouter } from './modules/demandes-colocation/demandes-colocation.router';
 import { notificationsRouter } from './modules/notifications/notifications.router';
 import { blocagesRouter } from './modules/blocages/blocages.router';
 
@@ -90,7 +89,6 @@ app.use('/api/colocations', colocationsRouter);
 app.use('/api/abonnements', abonnementsRouter);
 app.use('/api/messagerie', messagerieRouter);
 app.use('/api/admin', adminRouter);
-app.use('/api/demandes-colocation', demandesColocationRouter);
 app.use('/api/notifications', notificationsRouter);
 app.use('/api/blocages', blocagesRouter);
 app.use('/api/sauvegardes', sauvegardesRouter);

@@ -36,6 +36,7 @@ enum StatutAnnonce {
   INACTIVE
   MODEREE
   SUPPRIMEE
+  COMPLET
 }
 
 enum StatutColocation {
@@ -50,46 +51,31 @@ enum StatutColocataire {
   PARTI
 }
 
-model Sauvegarde {
-  id          String      @id @default(uuid())
-  utilisateurId String
-  utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id])
-  annonceId   String
-  annonce     Annonce     @relation(fields: [annonceId], references: [id])
-  createdAt   DateTime    @default(now())
-
-  @@unique([utilisateurId, annonceId])
-  @@map("sauvegardes")
-}
-
-
 enum Sexe {
   HOMME
   FEMME
 }
 
 model Utilisateur {
-  id               String              @id @default(uuid())
-  nom              String
-  prenom           String
-  email            String              @unique
-  telephone        String?
-  motDePasse       String
-  sexe             Sexe                @default(HOMME)
-  ville            String?
-  universite       String?
-  filiere          String?
-  niveau           String?
-  typeCompte       TypeCompte          @default(ETUDIANT)
-
-  profession       String?             // pour les non-étudiants
-
-  photo            String?
-  emailVerifie     Boolean             @default(false)
-  tokenVerifEmail  String?
-  actif            Boolean             @default(true)
-  createdAt        DateTime            @default(now())
-  updatedAt        DateTime            @updatedAt
+  id                String              @id @default(uuid())
+  nom               String
+  prenom            String
+  email             String              @unique
+  telephone         String?
+  motDePasse        String
+  sexe              Sexe                @default(HOMME)
+  ville             String?
+  universite        String?
+  filiere           String?
+  niveau            String?
+  typeCompte        TypeCompte          @default(ETUDIANT)
+  profession        String?
+  photo             String?
+  emailVerifie      Boolean             @default(false)
+  tokenVerifEmail   String?
+  actif             Boolean             @default(true)
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
 
   annonces          Annonce[]
   abonnements       Abonnement[]
@@ -97,38 +83,39 @@ model Utilisateur {
   messagesRecus     Message[]           @relation("Destinataire")
   colocataires      Colocataire[]
   notifications     Notification[]
-  demandesEnvoyees  DemandeColocation[] @relation("Demandeur")
   signalements      Signalement[]       @relation("Signaleur")
-
-  sauvegardes   Sauvegarde[]
+  sauvegardes       Sauvegarde[]
+  blocagesEmis      Blocage[]           @relation("Bloqueur")
+  blocagesRecus     Blocage[]           @relation("Bloque")
+  demandesPostulees Demande[]           @relation("Requester")
 
   @@map("utilisateurs")
 }
 
 model Annonce {
-  id              String         @id @default(uuid())
+  id              String        @id @default(uuid())
   proprietaireId  String
-  proprietaire    Utilisateur    @relation(fields: [proprietaireId], references: [id])
+  proprietaire    Utilisateur   @relation(fields: [proprietaireId], references: [id])
   type            TypeAnnonce
   adresse         String?
   quartier        String?
   ville           String
   loyerTotal      Int
   nbPlaces        Int
-  placesRestantes Int @default(0)
+  placesRestantes Int           @default(0)
   nbColocataires  Int?
   caution         Int?
   description     String?
   equipements     String[]
   photos          String[]
-  statut          StatutAnnonce  @default(ACTIVE)
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
+  statut          StatutAnnonce @default(ACTIVE)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 
   colocation   Colocation?
   signalements Signalement[]
-
-  sauvegardes   Sauvegarde[]
+  sauvegardes  Sauvegarde[]
+  demandes     Demande[]
 
   @@map("annonces")
 }
@@ -147,8 +134,7 @@ model Colocation {
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
 
-  colocataires       Colocataire[]
-  demandesColocation DemandeColocation[]
+  colocataires Colocataire[]
 
   @@map("colocations")
 }
@@ -169,19 +155,45 @@ model Colocataire {
   @@map("colocataires")
 }
 
-model DemandeColocation {
-  id           String      @id @default(uuid())
-  demandeurId  String
-  demandeur    Utilisateur @relation("Demandeur", fields: [demandeurId], references: [id])
-  colocationId String
-  colocation   Colocation  @relation(fields: [colocationId], references: [id])
-  message      String?
-  statut       String      @default("EN_ATTENTE")
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
+model Sauvegarde {
+  id            String      @id @default(uuid())
+  utilisateurId String
+  utilisateur   Utilisateur @relation(fields: [utilisateurId], references: [id])
+  annonceId     String
+  annonce       Annonce     @relation(fields: [annonceId], references: [id])
+  createdAt     DateTime    @default(now())
 
-  @@unique([demandeurId, colocationId])
-  @@map("demandes_colocation")
+  @@unique([utilisateurId, annonceId])
+  @@map("sauvegardes")
+}
+
+model Blocage {
+  id         String      @id @default(uuid())
+  bloqueurId String
+  bloqueur   Utilisateur @relation("Bloqueur", fields: [bloqueurId], references: [id])
+  bloqueId   String
+  bloque     Utilisateur @relation("Bloque", fields: [bloqueId], references: [id])
+  createdAt  DateTime    @default(now())
+
+  @@unique([bloqueurId, bloqueId])
+  @@map("blocages")
+}
+
+model Demande {
+  id                String      @id @default(uuid())
+  annonceId         String
+  annonce           Annonce     @relation(fields: [annonceId], references: [id])
+  requesterId       String
+  requester         Utilisateur @relation("Requester", fields: [requesterId], references: [id])
+  message           String?
+  statut            String      @default("PENDING")
+  requesterConfirme Boolean     @default(false)
+  auteurConfirme    Boolean     @default(false)
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  @@unique([annonceId, requesterId])
+  @@map("demandes")
 }
 
 model Abonnement {
@@ -208,6 +220,7 @@ model Message {
   destinataireId String
   destinataire   Utilisateur @relation("Destinataire", fields: [destinataireId], references: [id])
   contenu        String
+  media          String?
   lu             Boolean     @default(false)
   createdAt      DateTime    @default(now())
 
