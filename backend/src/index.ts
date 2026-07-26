@@ -34,12 +34,11 @@ const allowedOrigins = Array.from(new Set([...defaultAllowedOrigins, ...envAllow
 const isLocalhostDevOrigin = (o: string) => /^http:\/\/localhost:\d+$/.test(o);
 
 app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) return callback(null, true);
-    if (process.env.NODE_ENV === 'development' && isLocalhostDevOrigin(origin)) return callback(null, true);
-    return callback(new Error(`Origine non autorisÃ©e par CORS: ${origin}`));
-  },
+  origin: [
+    'https://colocbenin.com',
+    'https://www.colocbenin.com',
+    'http://localhost:3000',
+  ],
   credentials: true,
 }));
 
