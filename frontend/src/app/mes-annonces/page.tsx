@@ -32,7 +32,7 @@ export default function MesAnnoncesPage() {
             <h1 className="text-xl font-semibold">Mes annonces</h1>
             <p className="text-sm text-gray-500 mt-0.5">{annonces.length} annonce{annonces.length > 1 ? 's' : ''} publiee{annonces.length > 1 ? 's' : ''}</p>
           </div>
-          <Link href="/annonces/creer" className="btn-primary text-sm">+ Publier</Link>
+          <Link href="/annonces/creer" className="bg-sky-800 hover:bg-sky-700 text-white text-sm font-medium px-4 py-2 rounded-xl transition-colors">+ Publier</Link>
         </div>
 
         {loading ? (
@@ -42,8 +42,8 @@ export default function MesAnnoncesPage() {
         ) : annonces.length === 0 ? (
           <div className="text-center py-16">
             <p className="text-4xl mb-3">📋</p>
-            <p className="text-gray-400 text-sm mb-4">Vous n avez pas encore publie d annonce</p>
-            <Link href="/annonces/creer" className="btn-primary text-sm">Publier ma premiere annonce</Link>
+            <p className="text-gray-400 text-sm mb-4">Vous n'avez pas encore publié d'annonce</p>
+            <Link href="/annonces/creer" className="bg-sky-800 hover:bg-sky-700 text-white text-sm font-medium px-4 py-2 rounded-xl transition-colors">Publier ma première annonce</Link>
           </div>
         ) : (
           <div className="space-y-4">

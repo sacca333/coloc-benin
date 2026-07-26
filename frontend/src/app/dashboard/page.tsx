@@ -117,7 +117,7 @@ export default function DashboardPage() {
               <div className="text-4xl mb-3">🤍</div>
               <p className="font-medium text-gray-900">Aucune sauvegarde</p>
               <p className="text-sm text-gray-500 mt-1">Sauvegardez des annonces pour les retrouver ici</p>
-              <Link href="/annonces" className="inline-block mt-4 px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium">
+              <Link href="/annonces" className="bg-sky-800 hover:bg-sky-700 text-white text-sm font-medium px-4 py-2 rounded-xl transition-colors">
                 Parcourir les annonces
               </Link>
             </div>
@@ -155,8 +155,8 @@ export default function DashboardPage() {
               <div className="text-4xl mb-3">📋</div>
               <p className="font-medium text-gray-900">Aucune annonce</p>
               <p className="text-sm text-gray-500 mt-1">Publiez une annonce pour attirer des colocataires</p>
-              <Link href="/annonces/creer" className="inline-block mt-4 px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium">
-                Creer une annonce
+              <Link href="/annonces/creer" className="bg-sky-800 hover:bg-sky-700 text-white text-sm font-medium px-4 py-2 rounded-xl transition-colors">
+                Créer une annonce
               </Link>
             </div>
           ) : (
