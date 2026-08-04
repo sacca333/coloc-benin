@@ -96,15 +96,15 @@ export default function AnnoncesPage() {
         </div>
 
         {showFilterPanel && (
-          <div className="mb-6 p-4 bg-white rounded-2xl border border-violet-100 shadow-sm space-y-4"
-            style={{ boxShadow: '0 4px 20px rgba(123, 97, 255, 0.08)' }}>
+          <div className="mb-6 p-4 bg-white rounded-2xl border border-sky-100 shadow-sm space-y-4"
+            style={{ boxShadow: '0 4px 20px rgba(7, 89, 133, 0.08)' }}>
             {activeFilter === 'ville' && (
               <div>
                 <label className="text-xs font-semibold text-gray-500 mb-2 block uppercase tracking-wide">Ville</label>
                 <div className="flex flex-wrap gap-2">
                   {VILLES.map(v => (
                     <button key={v} onClick={() => updateFiltre('ville', v)}
-                      className={clsx('px-3 py-1.5 rounded-full text-sm border transition-all', filtres.ville === v ? 'bg-violet-600 text-white border-transparent' : 'border-gray-200 text-gray-600 hover:border-violet-300')}>
+                      className={clsx('px-3 py-1.5 rounded-full text-sm border transition-all', filtres.ville === v ? 'bg-sky-600 text-white border-transparent' : 'border-gray-200 text-gray-600 hover:border-sky-300')}>
                       {v}
                     </button>
                   ))}
@@ -117,7 +117,7 @@ export default function AnnoncesPage() {
                 <div className="flex gap-2">
                   {[{ val: 'LOGEMENT_DISPONIBLE', label: 'Logement disponible' }, { val: 'PLACE_EN_COLOCATION', label: 'Place en colocation' }].map(t => (
                     <button key={t.val} onClick={() => updateFiltre('typeAnnonce', t.val)}
-                      className={clsx('px-4 py-2 rounded-full text-sm border transition-all', filtres.typeAnnonce === t.val ? 'bg-violet-600 text-white border-transparent' : 'border-gray-200 text-gray-600 hover:border-violet-300')}>
+                      className={clsx('px-4 py-2 rounded-full text-sm border transition-all', filtres.typeAnnonce === t.val ? 'bg-sky-600 text-white border-transparent' : 'border-gray-200 text-gray-600 hover:border-sky-300')}>
                       {t.label}
                     </button>
                   ))}
@@ -163,8 +163,8 @@ export default function AnnoncesPage() {
                       className={clsx(
                         'px-4 py-2 rounded-full text-sm border transition-all',
                         filtres.sexe === s.val
-                          ? 'bg-violet-600 text-white border-transparent'
-                          : 'border-gray-200 text-gray-600 hover:border-violet-300'
+                          ? 'bg-sky-600 text-white border-transparent'
+                          : 'border-gray-200 text-gray-600 hover:border-sky-300'
                       )}
                     >
                       {s.label}
@@ -257,7 +257,7 @@ function AnnonceCard({ annonce }: { annonce: Annonce }) {
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2">
             <div>
-              <span className={clsx('text-xs px-2 py-0.5 rounded-full font-medium', annonce.type === 'LOGEMENT_DISPONIBLE' ? 'bg-violet-50 text-violet-600' : 'bg-teal-50 text-teal-600')}>
+              <span className={clsx('text-xs px-2 py-0.5 rounded-full font-medium', annonce.type === 'LOGEMENT_DISPONIBLE' ? 'bg-sky-50 text-sky-800' : 'bg-teal-50 text-teal-600')}>
                 {annonce.type === 'LOGEMENT_DISPONIBLE' ? 'Logement' : 'Place en coloc'}
               </span>
               <h3 className="font-medium text-sm mt-1">{annonce.quartier || annonce.adresse || annonce.ville}</h3>

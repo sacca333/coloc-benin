@@ -90,7 +90,7 @@ export default function AnnonceDetailPage() {
             <div className="card">
               <div className="flex items-start justify-between flex-wrap gap-3">
                 <div>
-                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${annonce.type === 'LOGEMENT_DISPONIBLE' ? 'bg-primary-50 text-primary-600' : 'bg-teal-50 text-teal-600'}`}>
+                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${annonce.type === 'LOGEMENT_DISPONIBLE' ? 'bg-sky-50 text-sky-800' : 'bg-teal-50 text-teal-600'}`}>
                     {annonce.type === 'LOGEMENT_DISPONIBLE' ? 'Logement disponible' : 'Place en colocation'}
                   </span>
                   <h1 className="text-lg font-semibold mt-2">
@@ -159,18 +159,18 @@ export default function AnnonceDetailPage() {
                       <button
                         onClick={handleContacter}
                         disabled={!messageEnvoi.trim()}
-                        className="btn-primary w-full text-sm"
+                        className="bg-sky-800 hover:bg-sky-700 disabled:opacity-50 text-white text-sm font-medium px-4 py-2 rounded-xl transition-colors w-full"
                       >
                         Envoyer un message
                       </button>
                     </div>
                   ) : (
-                    <Link href="/abonnement" className="btn-primary block text-center text-sm">
+                    <Link href="/abonnement" className="bg-sky-800 hover:bg-sky-700 text-white text-sm font-medium px-4 py-2 rounded-xl transition-colors block text-center">
                       S'abonner pour contacter
                     </Link>
                   )
                 ) : (
-                  <Link href="/auth/login" className="btn-primary block text-center text-sm">
+                  <Link href="/auth/login" className="bg-sky-800 hover:bg-sky-700 text-white text-sm font-medium px-4 py-2 rounded-xl transition-colors block text-center">
                     Se connecter pour contacter
                   </Link>
                 )
@@ -180,7 +180,7 @@ export default function AnnonceDetailPage() {
                 <div className="space-y-2">
                   <Link
                     href={`/annonces/${annonce.id}/modifier`}
-                    className="btn-outline block text-center text-sm"
+                    className="bg-sky-800 hover:bg-sky-700 text-white text-sm font-medium px-4 py-2 rounded-xl transition-colors block text-center"
                   >
                     ✏️ Modifier mon annonce
                   </Link>
