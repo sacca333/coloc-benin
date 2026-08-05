@@ -39,7 +39,7 @@ export const getAnnonce = async (req: Request, res: Response) => {
 export const creerAnnonce = async (req: AuthRequest, res: Response) => {
   try {
     const { type, adresse, quartier, ville, loyerTotal, nbPlaces, nbColocataires, caution, description, equipements } = req.body;
-    const photos = (req.files as Express.Multer.File[] | undefined)?.map(f => '/uploads/' + f.filename) || [];
+    const photos = (req.files as Express.Multer.File[] | undefined)?.map(f => f.path) || [];
 
     const annonce = await prisma.annonce.create({
       data: {

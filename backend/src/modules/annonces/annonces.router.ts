@@ -1,11 +1,11 @@
 ﻿import { Router, Request, Response, NextFunction } from 'express';
 import multer from 'multer';
 import path from 'path';
-import fs from 'fs';
 import sharp from 'sharp';
 import { body } from 'express-validator';
 import { authenticate, requireAbonnementActif } from '../../middlewares/auth.middleware';
 import { validate } from '../../middlewares/validate.middleware';
+import cloudinary from '../../config/cloudinary'; // adapte le chemin
 import {
   listerAnnonces,
   getAnnonce,
@@ -14,18 +14,8 @@ import {
   supprimerAnnonce,
 } from './annonces.controller';
 
-const UPLOAD_DIR = process.env.UPLOAD_DIR || './uploads';
-
-// Stockage temporaire avant compression
-const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => {
-    cb(null, UPLOAD_DIR);
-  },
-  filename: (_req, file, cb) => {
-    const ext = path.extname(file.originalname).toLowerCase();
-    cb(null, `tmp-${Date.now()}-${Math.random().toString(36).slice(2)}${ext}`);
-  },
-});
+// Stockage en mémoire : plus de fichier local, tout se passe en RAM
+const storage = multer.memoryStorage();
 
 const upload = multer({
   storage,
@@ -40,25 +30,46 @@ const upload = multer({
   },
 });
 
-// Middleware de compression Sharp
-const compressImages = async (req: Request, _res: Response, next: NextFunction) => {
+// Compression Sharp en mémoire + upload vers Cloudinary
+const compressAndUploadImages = async (req: Request, _res: Response, next: NextFunction) => {
   if (!req.files || !(req.files as Express.Multer.File[]).length) return next();
   try {
-    const compressed: Express.Multer.File[] = [];
-    for (const file of req.files as Express.Multer.File[]) {
-      const newFilename = `annonce-${Date.now()}-${Math.random().toString(36).slice(2)}.webp`;
-      const newPath = path.join(UPLOAD_DIR, newFilename);
-      await sharp(file.path)
-        .resize(1200, 900, { fit: 'inside', withoutEnlargement: true })
-        .webp({ quality: 82 })
-        .toFile(newPath);
-      fs.unlinkSync(file.path); // Supprimer le fichier temporaire
-      compressed.push({ ...file, filename: newFilename, path: newPath });
-    }
-    req.files = compressed;
+    const files = req.files as Express.Multer.File[];
+
+    const uploaded = await Promise.all(
+      files.map(async (file) => {
+        // Compression en mémoire, pas de fichier temporaire
+        const compressedBuffer = await sharp(file.buffer)
+          .resize(1200, 900, { fit: 'inside', withoutEnlargement: true })
+          .webp({ quality: 82 })
+          .toBuffer();
+
+        // Upload du buffer vers Cloudinary
+        const result = await new Promise<{ secure_url: string; public_id: string }>(
+          (resolve, reject) => {
+            const uploadStream = cloudinary.uploader.upload_stream(
+              { folder: 'annonces', format: 'webp' },
+              (error, result) => {
+                if (error || !result) return reject(error);
+                resolve(result);
+              }
+            );
+            uploadStream.end(compressedBuffer);
+          }
+        );
+
+        return {
+          ...file,
+          path: result.secure_url,   // URL publique Cloudinary
+          filename: result.public_id, // utile si tu veux supprimer l'image plus tard
+        };
+      })
+    );
+
+    req.files = uploaded;
     next();
   } catch (err) {
-    console.error('[compressImages]', err);
+    console.error('[compressAndUploadImages]', err);
     next(err);
   }
 };
@@ -73,7 +84,7 @@ annoncesRouter.post(
   authenticate,
   requireAbonnementActif,
   upload.array('photos', 5),
-  compressImages,
+  compressAndUploadImages,
   [
     body('type').isIn(['LOGEMENT_DISPONIBLE', 'PLACE_EN_COLOCATION']),
     body('ville').trim().notEmpty().withMessage('Ville requise'),
