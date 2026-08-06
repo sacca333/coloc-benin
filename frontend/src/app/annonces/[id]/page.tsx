@@ -65,7 +65,7 @@ export default function AnnonceDetailPage() {
               {annonce.photos.length > 0 ? (
                 <>
                   <img
-                    src={`${process.env.NEXT_PUBLIC_API_URL?.replace('/api', '')}${annonce.photos[photoIdx]}`}
+                    src={annonce.photos[photoIdx]}
                     alt=""
                     className="w-full h-full object-cover"
                   />
