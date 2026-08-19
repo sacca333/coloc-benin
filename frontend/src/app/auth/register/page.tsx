@@ -69,7 +69,7 @@ export default function RegisterPage() {
             </div>
             <h2 className="text-lg font-semibold mb-2">Compte créé !</h2>
             <p className="text-sm text-gray-500 mb-4">Vérifiez votre boite mail et cliquez sur le lien de confirmation.</p>
-            <Link href="/auth/login" className="btn-primary block text-center text-sm w-full">Se connecter</Link>
+            <Link href="/auth/login" className="block text-center text-sm w-full font-medium px-4 py-2 rounded-lg transition-colors bg-sky-800 hover:bg-sky-700 text-white">Se connecter</Link>
           </div>
         </div>
       </div>

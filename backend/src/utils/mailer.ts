@@ -39,7 +39,7 @@ export async function sendVerificationEmail(email: string, nom: string, token: s
     <div style="font-family:sans-serif;max-width:520px;margin:auto">
       <h2>Bienvenue sur ColocBénin, ${nom} !</h2>
       <p>Cliquez sur le bouton ci-dessous pour activer votre compte :</p>
-      <a href="${lien}" style="display:inline-block;padding:12px 24px;background:#7F77DD;color:#fff;border-radius:8px;text-decoration:none;font-weight:500">
+      <a href="${lien}" style="display:inline-block;padding:12px 24px;background:#075985;color:#fff;border-radius:8px;text-decoration:none;font-weight:500">
         Vérifier mon email
       </a>
       <p style="margin-top:16px;color:#888;font-size:12px">Ce lien est valable 24 heures.</p>
