@@ -78,7 +78,7 @@ export function Footer() {
                 </svg>
               </a>
 
-              <a href="mailto:contact@colocbenin.bj"
+              <a href="mailto:contact@colocbenin.com"
                 className="w-7 h-7 rounded-full bg-gray-500 hover:bg-gray-400 transition-colors flex items-center justify-center flex-shrink-0">
                 <svg viewBox="0 0 24 24" fill="white" className="w-5 h-5">
                   <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
