@@ -2,12 +2,6 @@
 import { useEffect, useState } from 'react';
 import { api } from '@/lib/api';
 
-const VILLES_DEFAUT = [
-  'Cotonou','Porto-Novo','Parakou','Abomey-Calavi','Bohicon',
-  'Natitingou','Lokossa','Ouidah','Kandi','Djougou',
-  'Abomey','Malanville','Nikki','Savalou','Bassila',
-];
-
 interface Ville {
   id: string;
   nom: string;
@@ -40,33 +34,7 @@ export default function AdminVilles() {
       const r = await api.get('/admin/villes');
       setVilles(r.data);
     } catch {
-      // Si l'endpoint n'existe pas encore, on construit depuis les stats
-      try {
-        const [statsR, annoncesR] = await Promise.all([
-          api.get('/admin/stats'),
-          api.get('/admin/annonces', { params: { limit: 100, page: 1 } }),
-        ]);
-        const parVille: Record<string, { annonces: number; utilisateurs: number }> = {};
-        (annoncesR.data.annonces || []).forEach((a: any) => {
-          if (!a.ville) return;
-          if (!parVille[a.ville]) parVille[a.ville] = { annonces: 0, utilisateurs: 0 };
-          parVille[a.ville].annonces++;
-        });
-        (statsR.data.parVille || []).forEach((v: any) => {
-          if (!v.ville) return;
-          if (!parVille[v.ville]) parVille[v.ville] = { annonces: 0, utilisateurs: 0 };
-          parVille[v.ville].utilisateurs = v._count || 0;
-        });
-        const villesConnues = new Set([...Object.keys(parVille), ...VILLES_DEFAUT]);
-        const built: Ville[] = Array.from(villesConnues).map(nom => ({
-          id: nom,
-          nom,
-          active: true,
-          nbAnnonces: parVille[nom]?.annonces || 0,
-          nbUtilisateurs: parVille[nom]?.utilisateurs || 0,
-        })).sort((a, b) => b.nbAnnonces - a.nbAnnonces);
-        setVilles(built);
-      } catch {}
+      showToast("Impossible de charger les villes", 'error');
     } finally { setLoading(false); }
   };
 
@@ -75,38 +43,43 @@ export default function AdminVilles() {
     const newActive = !ville.active;
     try {
       await api.put(`/admin/villes/${encodeURIComponent(ville.nom)}`, { active: newActive });
+      setVilles(prev => prev.map(v => v.id === ville.id ? { ...v, active: newActive } : v));
+      showToast(`${ville.nom} ${newActive ? 'activée' : 'désactivée'}`);
     } catch {
-      // Pas d'endpoint : mise à jour locale uniquement
+      showToast("Échec de la mise à jour", 'error');
+    } finally {
+      setSaving(null);
     }
-    setVilles(prev => prev.map(v => v.id === ville.id ? { ...v, active: newActive } : v));
-    showToast(`${ville.nom} ${newActive ? 'activée' : 'désactivée'}`);
-    setSaving(null);
   };
 
-  const ajouterVille = () => {
+  const ajouterVille = async () => {
     const nom = newVille.trim();
     if (!nom) return;
     if (villes.some(v => v.nom.toLowerCase() === nom.toLowerCase())) {
       showToast('Cette ville existe déjà', 'error');
       return;
     }
-    const nouvelle: Ville = { id: nom, nom, active: true, nbAnnonces: 0, nbUtilisateurs: 0 };
-    setVilles(prev => [nouvelle, ...prev]);
-    setNewVille('');
-    setShowAdd(false);
-    showToast(`${nom} ajoutée avec succès`);
-    api.post('/admin/villes', { nom, active: true }).catch(() => {});
+    try {
+      const r = await api.post('/admin/villes', { nom, active: true });
+      const nouvelle: Ville = { id: r.data.id, nom: r.data.nom, active: r.data.active, nbAnnonces: 0, nbUtilisateurs: 0 };
+      setVilles(prev => [nouvelle, ...prev]);
+      setNewVille('');
+      setShowAdd(false);
+      showToast(`${nom} ajoutée avec succès`);
+    } catch (err: any) {
+      showToast(err?.response?.data?.error || "Échec de l'ajout", 'error');
+    }
   };
 
   const supprimerVille = async (ville: Ville) => {
     if (!confirm(`Supprimer ${ville.nom} ? Les annonces existantes ne seront pas affectées.`)) return;
-    if (ville.nbAnnonces > 0) {
-      showToast(`Impossible : ${ville.nbAnnonces} annonce(s) dans cette ville`, 'error');
-      return;
+    try {
+      await api.delete(`/admin/villes/${encodeURIComponent(ville.nom)}`);
+      setVilles(prev => prev.filter(v => v.id !== ville.id));
+      showToast(`${ville.nom} supprimée`);
+    } catch (err: any) {
+      showToast(err?.response?.data?.error || 'Impossible de supprimer cette ville', 'error');
     }
-    setVilles(prev => prev.filter(v => v.id !== ville.id));
-    showToast(`${ville.nom} supprimée`);
-    api.delete(`/admin/villes/${encodeURIComponent(ville.nom)}`).catch(() => {});
   };
 
   const filtered = villes.filter(v => v.nom.toLowerCase().includes(search.toLowerCase()));
@@ -194,7 +167,7 @@ export default function AdminVilles() {
       {/* Recherche */}
       <div style={{ position: 'relative', marginBottom: 16 }}>
         <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }}>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} style={{width:16,height:16}}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} style={{ width: 16, height: 16 }}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
         </span>
@@ -255,11 +228,6 @@ export default function AdminVilles() {
           ))}
         </div>
       )}
-
-      {/* Note backend */}
-      <div style={{ marginTop: 24, padding: '14px 18px', background: '#fefce8', border: '1px solid #fde047', borderRadius: 12, fontSize: 12, color: '#92400e' }}>
-        <strong>⚠️ Note backend :</strong> Pour que l'activation/désactivation soit persistante, crée les routes <code>GET /admin/villes</code>, <code>POST /admin/villes</code>, <code>PUT /admin/villes/:nom</code> et <code>DELETE /admin/villes/:nom</code>. En attendant, les changements sont appliqués localement.
-      </div>
     </div>
   );
 }

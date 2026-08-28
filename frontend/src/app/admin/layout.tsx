@@ -2,42 +2,54 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { api } from '@/lib/api';
+import { api, photoUrl } from '@/lib/api';
 
 const TIMEOUT_MS = 15 * 60 * 1000; // 15 minutes d'inactivité
 
 const nav = [
-  { href: '/admin', label: "Vue d'ensemble", icon: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} style={{width:20,height:20}}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-    </svg>
-  )},
-  { href: '/admin/utilisateurs', label: 'Utilisateurs', icon: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} style={{width:20,height:20}}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
-    </svg>
-  )},
-  { href: '/admin/annonces', label: 'Annonces', icon: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} style={{width:20,height:20}}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
-    </svg>
-  )},
-  { href: '/admin/abonnements', label: 'Abonnements', icon: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} style={{width:20,height:20}}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-    </svg>
-  )},
-  { href: '/admin/statistiques', label: 'Statistiques', icon: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} style={{width:20,height:20}}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-    </svg>
-  )},
-  { href: '/admin/villes', label: 'Villes', icon: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} style={{width:20,height:20}}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-      <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-    </svg>
-  )},
+  {
+    href: '/admin', label: "Vue d'ensemble", icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} style={{ width: 20, height: 20 }}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+      </svg>
+    )
+  },
+  {
+    href: '/admin/utilisateurs', label: 'Utilisateurs', icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} style={{ width: 20, height: 20 }}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+      </svg>
+    )
+  },
+  {
+    href: '/admin/annonces', label: 'Annonces', icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} style={{ width: 20, height: 20 }}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+      </svg>
+    )
+  },
+  {
+    href: '/admin/abonnements', label: 'Abonnements', icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} style={{ width: 20, height: 20 }}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+      </svg>
+    )
+  },
+  {
+    href: '/admin/statistiques', label: 'Statistiques', icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} style={{ width: 20, height: 20 }}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+      </svg>
+    )
+  },
+  {
+    href: '/admin/villes', label: 'Villes', icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} style={{ width: 20, height: 20 }}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+      </svg>
+    )
+  },
 ];
 
 interface AdminNotif {
@@ -151,7 +163,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           lien: '/admin/abonnements',
         });
       });
-    } catch {}
+    } catch { }
     setNotifs(prev => {
       const ids = new Set(prev.map(n => n.id));
       const merged = [...prev];
@@ -178,8 +190,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       try {
         const [u, a, ab] = await Promise.allSettled([
           api.get('/admin/utilisateurs', { params: { search: searchQ, limit: 4, page: 1 } }),
-          api.get('/admin/annonces',     { params: { search: searchQ, limit: 4, page: 1 } }),
-          api.get('/admin/abonnements',  { params: { limit: 4, page: 1 } }),
+          api.get('/admin/annonces', { params: { search: searchQ, limit: 4, page: 1 } }),
+          api.get('/admin/abonnements', { params: { limit: 4, page: 1 } }),
         ]);
         if (u.status === 'fulfilled') {
           (u.value.data.users || []).forEach((x: any) => results.push({
@@ -211,7 +223,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               icon: '💳',
             }));
         }
-      } catch {}
+      } catch { }
       setSearchResults(results);
       setSearchLoading(false);
     }, 350);
@@ -274,6 +286,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         .anav { display:flex; align-items:center; gap:12px; padding:10px 14px; border-radius:12px; color:#bae6fd; text-decoration:none; font-size:14px; font-weight:500; transition:all .2s; }
         .anav:hover { background:rgba(255,255,255,0.1); color:#fff; }
         .anav.on    { background:#075985; color:#fff; box-shadow:0 2px 8px rgba(0,0,0,0.2); }
+        .anav-profil:hover { background:rgba(255,255,255,0.1); }
 
         /* Recherche */
         .search-wrap  { position:relative; flex:1; max-width:480px; }
@@ -354,25 +367,30 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: 12, display: 'flex', flexDirection: 'column', gap: 2 }}>
           {user && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 14px', marginBottom: 4 }}>
-              <div style={{ width: 30, height: 30, borderRadius: '50%', background: 'linear-gradient(135deg,#4ade80,#3b82f6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, color: '#fff', flexShrink: 0 }}>
-                {user.prenom?.[0]}{user.nom?.[0]}
-              </div>
+            <Link href="/admin/profil" style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 14px', marginBottom: 4, textDecoration: 'none', borderRadius: 10, transition: 'background .2s' }}
+              className="anav-profil">
+              {user.photo ? (
+                <img src={photoUrl(user.photo) || ''} alt="" style={{ width: 30, height: 30, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
+              ) : (
+                <div style={{ width: 30, height: 30, borderRadius: '50%', background: 'linear-gradient(135deg,#4ade80,#3b82f6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, color: '#fff', flexShrink: 0 }}>
+                  {user.prenom?.[0]}{user.nom?.[0]}
+                </div>
+              )}
               <div style={{ minWidth: 0 }}>
                 <div style={{ fontSize: 12, fontWeight: 600, color: '#fff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user.prenom} {user.nom}</div>
                 <div style={{ fontSize: 10, color: '#7dd3fc' }}>Administrateur</div>
               </div>
-            </div>
+            </Link>
           )}
           <Link href="/dashboard" className="anav" style={{ fontSize: 13 }}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} style={{width:18,height:18}}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} style={{ width: 18, height: 18 }}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
             Retour app
           </Link>
           <button onClick={() => { localStorage.removeItem('coloc_token'); router.push('/auth/login'); }} className="anav"
             style={{ fontSize: 13, color: '#fca5a5', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', width: '100%' }}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} style={{width:18,height:18}}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} style={{ width: 18, height: 18 }}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
             </svg>
             Déconnexion
@@ -386,7 +404,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         {/* Topbar mobile */}
         <div className="admin-topbar-mobile">
           <button onClick={() => setSidebarOpen(true)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 6 }}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="#bae6fd" strokeWidth={2} style={{width:22,height:22}}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#bae6fd" strokeWidth={2} style={{ width: 22, height: 22 }}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
@@ -397,7 +415,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </span>
           {/* Cloche mobile */}
           <button onClick={() => setNotifOpen(o => !o)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 6, position: 'relative' }}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="#bae6fd" strokeWidth={2} style={{width:22,height:22}}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#bae6fd" strokeWidth={2} style={{ width: 22, height: 22 }}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
             </svg>
             {nonLues > 0 && (
@@ -445,7 +463,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           {/* Recherche globale */}
           <div className="search-wrap" ref={searchRef}>
             <span className="search-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} style={{width:16,height:16}}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} style={{ width: 16, height: 16 }}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </span>
@@ -466,10 +484,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   <div style={{ padding: '20px', textAlign: 'center', color: '#94a3b8', fontSize: 13 }}>Aucun résultat pour « {searchQ} »</div>
                 ) : (
                   <>
-                    {(['utilisateur','annonce','abonnement'] as const).map(type => {
+                    {(['utilisateur', 'annonce', 'abonnement'] as const).map(type => {
                       const items = searchResults.filter(r => r.type === type);
                       if (!items.length) return null;
-                      const labels: Record<string,string> = { utilisateur: 'Utilisateurs', annonce: 'Annonces', abonnement: 'Abonnements' };
+                      const labels: Record<string, string> = { utilisateur: 'Utilisateurs', annonce: 'Annonces', abonnement: 'Abonnements' };
                       return (
                         <div key={type}>
                           <div className="search-section">{labels[type]}</div>
@@ -480,7 +498,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                                 <div style={{ fontSize: 13, fontWeight: 600, color: '#0c4a6e', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.label}</div>
                                 <div style={{ fontSize: 11, color: '#64748b', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.sub}</div>
                               </div>
-                              <svg viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth={2} style={{width:14,height:14,flexShrink:0}}>
+                              <svg viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth={2} style={{ width: 14, height: 14, flexShrink: 0 }}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                               </svg>
                             </div>
@@ -501,7 +519,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <button onClick={() => setNotifOpen(o => !o)}
               style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 14px', borderRadius: 12, background: notifOpen ? '#e0f2fe' : '#f0f9ff', border: '1px solid #bae6fd', cursor: 'pointer', color: '#0369a1', transition: 'all .2s', position: 'relative' }}>
               <div style={{ position: 'relative' }}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} style={{width:18,height:18}}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} style={{ width: 18, height: 18 }}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                 </svg>
               </div>

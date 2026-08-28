@@ -221,6 +221,84 @@ adminRouter.delete('/annonces/:id', async (req, res) => {
   }
 });
 
+adminRouter.get('/villes', async (_req, res) => {
+  try {
+    const villes = await prisma.ville.findMany({ orderBy: { nom: 'asc' } });
+
+    const [parVilleAnnonces, parVilleUtilisateurs] = await Promise.all([
+      prisma.annonce.groupBy({ by: ['ville'], _count: true }),
+      prisma.utilisateur.groupBy({ by: ['ville'], _count: true, where: { ville: { not: null } } }),
+    ]);
+    const nbAnnoncesParVille: Record<string, number> = {};
+    parVilleAnnonces.forEach(v => { nbAnnoncesParVille[v.ville] = v._count; });
+    const nbUtilisateursParVille: Record<string, number> = {};
+    parVilleUtilisateurs.forEach(v => { if (v.ville) nbUtilisateursParVille[v.ville] = v._count; });
+
+    res.json(villes.map(v => ({
+      id: v.id,
+      nom: v.nom,
+      active: v.active,
+      nbAnnonces: nbAnnoncesParVille[v.nom] || 0,
+      nbUtilisateurs: nbUtilisateursParVille[v.nom] || 0,
+    })));
+  } catch (error) {
+    console.error('[admin/villes GET]', error);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+adminRouter.post('/villes', async (req, res) => {
+  try {
+    const { nom, active = true } = req.body;
+    if (!nom || !String(nom).trim()) return res.status(400).json({ error: 'Nom requis' });
+
+    const existante = await prisma.ville.findUnique({ where: { nom: String(nom).trim() } });
+    if (existante) return res.status(409).json({ error: 'Cette ville existe déjà' });
+
+    const ville = await prisma.ville.create({ data: { nom: String(nom).trim(), active: Boolean(active) } });
+    res.status(201).json(ville);
+  } catch (error) {
+    console.error('[admin/villes POST]', error);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+adminRouter.put('/villes/:nom', async (req, res) => {
+  try {
+    const nom = decodeURIComponent(req.params.nom);
+    const { active } = req.body;
+
+    const ville = await prisma.ville.findUnique({ where: { nom } });
+    if (!ville) return res.status(404).json({ error: 'Ville introuvable' });
+
+    const updated = await prisma.ville.update({ where: { nom }, data: { active: Boolean(active) } });
+    res.json(updated);
+  } catch (error) {
+    console.error('[admin/villes PUT]', error);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+adminRouter.delete('/villes/:nom', async (req, res) => {
+  try {
+    const nom = decodeURIComponent(req.params.nom);
+
+    const ville = await prisma.ville.findUnique({ where: { nom } });
+    if (!ville) return res.status(404).json({ error: 'Ville introuvable' });
+
+    const nbAnnonces = await prisma.annonce.count({ where: { ville: nom } });
+    if (nbAnnonces > 0) {
+      return res.status(409).json({ error: `Impossible : ${nbAnnonces} annonce(s) dans cette ville` });
+    }
+
+    await prisma.ville.delete({ where: { nom } });
+    res.json({ message: 'Ville supprimée' });
+  } catch (error) {
+    console.error('[admin/villes DELETE]', error);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
 adminRouter.get('/abonnements/export', async (_req, res) => {
   try {
     const abonnements = await prisma.abonnement.findMany({

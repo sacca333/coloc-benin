@@ -1,16 +1,15 @@
 ﻿import { Router } from 'express';
 import { Response } from 'express';
 import multer from 'multer';
-import path from 'path';
+import sharp from 'sharp';
 import bcrypt from 'bcrypt';
 import { authenticate } from '../../middlewares/auth.middleware';
 import { AuthRequest } from '../../middlewares/auth.middleware';
 import { prisma } from '../../config/database';
+import cloudinary from '../../config/cloudinary';
 
-const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => cb(null, process.env.UPLOAD_DIR || './uploads'),
-  filename: (_req, file, cb) => cb(null, `avatar-${Date.now()}${path.extname(file.originalname)}`),
-});
+// Stockage en mémoire : pas de fichier local, tout part vers Cloudinary
+const storage = multer.memoryStorage();
 const upload = multer({ storage, limits: { fileSize: 2 * 1024 * 1024 } });
 
 export const usersRouter = Router();
@@ -75,9 +74,25 @@ usersRouter.put('/me/password', async (req: AuthRequest, res: Response) => {
 usersRouter.post('/me/photo', upload.single('photo'), async (req: AuthRequest, res: Response) => {
   try {
     if (!req.file) return res.status(400).json({ error: 'Aucun fichier' });
-    const photoUrl = `/uploads/${req.file.filename}`;
-    await prisma.utilisateur.update({ where: { id: req.user!.id }, data: { photo: photoUrl } });
-    return res.json({ photo: photoUrl });
+
+    const compressedBuffer = await sharp(req.file.buffer)
+      .resize(500, 500, { fit: 'cover' })
+      .webp({ quality: 82 })
+      .toBuffer();
+
+    const result = await new Promise<{ secure_url: string }>((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        { folder: 'avatars', format: 'webp' },
+        (error, result) => {
+          if (error || !result) return reject(error);
+          resolve(result);
+        }
+      );
+      uploadStream.end(compressedBuffer);
+    });
+
+    await prisma.utilisateur.update({ where: { id: req.user!.id }, data: { photo: result.secure_url } });
+    return res.json({ photo: result.secure_url });
   } catch (error) {
     console.error('[uploadPhoto]', error);
     return res.status(500).json({ error: "Erreur serveur lors de l upload de la photo" });
