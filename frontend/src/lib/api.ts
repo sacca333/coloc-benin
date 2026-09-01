@@ -67,8 +67,6 @@ export const colocationsApi = {
   mesColocations: () => api.get('/colocations'),
   getById: (id: string) => api.get(`/colocations/${id}`),
   creer: (data: any) => api.post('/colocations', data),
-  inviter: (id: string, email: string) => api.post(`/colocations/${id}/inviter`, { email }),
-  accepter: (id: string, token: string) => api.post(`/colocations/${id}/accepter/${token}`),
   marquerLoyerPaye: (id: string) => api.patch(`/colocations/${id}/loyer-paye`),
   mettreAJourStatut: (id: string, userId: string, statut: string) =>
     api.patch(`/colocations/${id}/colocataires/${userId}/statut`, { statut }),

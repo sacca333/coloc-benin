@@ -12,8 +12,6 @@ export default function ColocDetailPage() {
   const { user } = useAuth();
   const [colocation, setColocation] = useState<Colocation | null>(null);
   const [loading, setLoading] = useState(true);
-  const [emailInvit, setEmailInvit] = useState('');
-  const [invitMsg, setInvitMsg] = useState('');
 
   const charger = () => {
     colocationsApi.getById(id)
@@ -22,17 +20,6 @@ export default function ColocDetailPage() {
   };
 
   useEffect(() => { charger(); }, [id]);
-
-  const handleInviter = async () => {
-    if (!emailInvit.trim()) return;
-    try {
-      await colocationsApi.inviter(id, emailInvit);
-      setInvitMsg(`Invitation envoyée à ${emailInvit}`);
-      setEmailInvit('');
-    } catch (err: any) {
-      setInvitMsg(err.response?.data?.error || 'Erreur');
-    }
-  };
 
   const handleMarquerPaye = async () => {
     await colocationsApi.marquerLoyerPaye(id);
@@ -65,7 +52,7 @@ export default function ColocDetailPage() {
             <span className={clsx(
               'text-xs px-2 py-1 rounded-full font-medium',
               colocation.statut === 'ACTIVE' ? 'badge-actif' :
-              colocation.statut === 'FERMEE' ? 'badge-expire' : 'badge-attente'
+                colocation.statut === 'FERMEE' ? 'badge-expire' : 'badge-attente'
             )}>
               {colocation.statut === 'ACTIVE' ? 'Active' : colocation.statut === 'FERMEE' ? 'Fermée' : 'En attente'}
             </span>
@@ -97,8 +84,8 @@ export default function ColocDetailPage() {
                   {c.utilisateur.photo
                     ? <img src={c.utilisateur.photo} alt="" className="w-9 h-9 rounded-full object-cover" />
                     : <span className="w-9 h-9 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center text-sm font-medium">
-                        {c.utilisateur.prenom[0]}{c.utilisateur.nom[0]}
-                      </span>
+                      {c.utilisateur.prenom[0]}{c.utilisateur.nom[0]}
+                    </span>
                   }
                   <div>
                     <p className="text-sm font-medium">{c.utilisateur.prenom} {c.utilisateur.nom}</p>
@@ -137,24 +124,6 @@ export default function ColocDetailPage() {
             </div>
           )}
         </div>
-
-        {/* Inviter */}
-        {moi?.statut === 'ACTIF' && actifs.length < colocation.nbPlaces && (
-          <div className="card">
-            <h2 className="font-semibold mb-3">Inviter un colocataire</h2>
-            <div className="flex gap-2">
-              <input
-                type="email"
-                value={emailInvit}
-                onChange={e => setEmailInvit(e.target.value)}
-                className="input flex-1 text-sm"
-                placeholder="email@etudiant.bj"
-              />
-              <button onClick={handleInviter} className="btn-primary text-sm whitespace-nowrap">Inviter</button>
-            </div>
-            {invitMsg && <p className="text-sm text-teal-600 mt-2">{invitMsg}</p>}
-          </div>
-        )}
       </main>
     </>
   );
