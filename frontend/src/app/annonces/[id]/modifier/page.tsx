@@ -32,6 +32,10 @@ export default function ModifierAnnoncePage() {
     const [equipements, setEquipements] = useState<string[]>([]);
     const [serverError, setServerError] = useState('');
     const [loading, setLoading] = useState(true);
+    const [photosExistantes, setPhotosExistantes] = useState<string[]>([]);
+    const [nouvellesPhotos, setNouvellesPhotos] = useState<File[]>([]);
+    const [nouvellesPreviews, setNouvellesPreviews] = useState<string[]>([]);
+    const [photoError, setPhotoError] = useState('');
 
     const { register, handleSubmit, setValue, watch, reset, formState: { errors, isSubmitting } } = useForm<FormData>({
         resolver: zodResolver(schema),
@@ -57,8 +61,42 @@ export default function ModifierAnnoncePage() {
                 equipements: a.equipements || [],
             });
             setEquipements(a.equipements || []);
+            setPhotosExistantes(a.photos || []);
         }).finally(() => setLoading(false));
     }, [id, user]);
+
+    const totalPhotos = photosExistantes.length + nouvellesPhotos.length;
+
+    const retirerPhotoExistante = (index: number) => {
+        setPhotosExistantes(prev => prev.filter((_, i) => i !== index));
+        setPhotoError('');
+    };
+
+    const retirerNouvellePhoto = (index: number) => {
+        setNouvellesPhotos(prev => prev.filter((_, i) => i !== index));
+        setNouvellesPreviews(prev => prev.filter((_, i) => i !== index));
+        setPhotoError('');
+    };
+
+    const ajouterPhotos = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = Array.from(e.target.files || []);
+        if (files.length === 0) return;
+        const placesRestantes = 5 - totalPhotos;
+        if (placesRestantes <= 0) {
+            setPhotoError('Maximum 5 photos par annonce');
+            e.target.value = '';
+            return;
+        }
+        const filesAcceptes = files.slice(0, placesRestantes);
+        if (files.length > placesRestantes) {
+            setPhotoError(`Seules ${placesRestantes} photo(s) supplémentaire(s) ont été ajoutées (limite de 5 au total)`);
+        } else {
+            setPhotoError('');
+        }
+        setNouvellesPhotos(prev => [...prev, ...filesAcceptes]);
+        setNouvellesPreviews(prev => [...prev, ...filesAcceptes.map(f => URL.createObjectURL(f))]);
+        e.target.value = '';
+    };
 
     const toggleEquipement = (eq: string) => {
         const next = equipements.includes(eq)
@@ -71,7 +109,16 @@ export default function ModifierAnnoncePage() {
     const onSubmit = async (data: FormData) => {
         setServerError('');
         try {
-            await api.put(`/annonces/${id}`, data);
+            const fd = new FormData();
+            Object.entries(data).forEach(([k, v]) => {
+                if (v !== undefined && v !== null) {
+                    if (Array.isArray(v)) fd.append(k, JSON.stringify(v));
+                    else fd.append(k, String(v));
+                }
+            });
+            fd.append('photosExistantes', JSON.stringify(photosExistantes));
+            nouvellesPhotos.forEach(p => fd.append('photos', p));
+            await api.put(`/annonces/${id}`, fd, { headers: { 'Content-Type': 'multipart/form-data' } });
             router.push(`/annonces/${id}`);
         } catch (err: any) {
             setServerError(err.response?.data?.error || 'Erreur lors de la modification');
@@ -103,14 +150,14 @@ export default function ModifierAnnoncePage() {
                         <h2 className="font-medium text-sm mb-3">Type d'annonce</h2>
                         <div className="grid grid-cols-2 gap-3">
                             {([
-                                ['LOGEMENT_DISPONIBLE', 'Logement disponible', 'Je propose un logement entier ou des chambres'],
+                                ['LOGEMENT_DISPONIBLE', 'Chambre à louer disponible', 'Je propose un logement entier ou des chambres'],
                                 ['PLACE_EN_COLOCATION', 'Place en colocation', 'Je cherche des colocataires pour rejoindre ma coloc'],
                             ] as const).map(([val, label, desc]) => (
                                 <label
                                     key={val}
                                     className={`border rounded-xl p-3 cursor-pointer transition-all ${watch('type') === val
-                                            ? 'border-primary-400 bg-primary-50'
-                                            : 'border-gray-200 hover:border-gray-300'
+                                        ? 'border-primary-400 bg-primary-50'
+                                        : 'border-gray-200 hover:border-gray-300'
                                         }`}
                                 >
                                     <input type="radio" value={val} {...register('type')} className="sr-only" />
@@ -150,8 +197,9 @@ export default function ModifierAnnoncePage() {
 
                     {/* Loyer */}
                     <div className="card">
-                        <h2 className="font-medium text-sm mb-3">Loyer & places</h2>
-                        <div className="grid grid-cols-3 gap-3">
+                        <h2 className="font-medium text-sm mb-3">Loyer</h2>
+                        <input type="hidden" {...register('nbPlaces', { valueAsNumber: true })} />
+                        <div className="grid grid-cols-2 gap-3">
                             <div>
                                 <label className="block text-sm text-gray-700 mb-1">
                                     Loyer total (FCFA) <span className="text-red-400">*</span>
@@ -163,19 +211,6 @@ export default function ModifierAnnoncePage() {
                                     placeholder="25000"
                                 />
                                 {errors.loyerTotal && <p className="text-xs text-red-500 mt-1">{errors.loyerTotal.message}</p>}
-                            </div>
-                            <div>
-                                <label className="block text-sm text-gray-700 mb-1">
-                                    Nb de places <span className="text-red-400">*</span>
-                                </label>
-                                <input
-                                    type="number"
-                                    min={2}
-                                    max={10}
-                                    {...register('nbPlaces', { valueAsNumber: true })}
-                                    className="input"
-                                />
-                                {errors.nbPlaces && <p className="text-xs text-red-500 mt-1">{errors.nbPlaces.message}</p>}
                             </div>
                             <div>
                                 <label className="block text-sm text-gray-700 mb-1">Caution (FCFA)</label>
@@ -199,14 +234,62 @@ export default function ModifierAnnoncePage() {
                                     type="button"
                                     onClick={() => toggleEquipement(eq)}
                                     className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${equipements.includes(eq)
-                                            ? 'bg-primary-400 text-white border-primary-400'
-                                            : 'border-gray-200 text-gray-600 hover:border-primary-300'
+                                        ? 'bg-primary-400 text-white border-primary-400'
+                                        : 'border-gray-200 text-gray-600 hover:border-primary-300'
                                         }`}
                                 >
                                     {eq}
                                 </button>
                             ))}
                         </div>
+                    </div>
+
+                    {/* Photos */}
+                    <div className="card">
+                        <h2 className="font-medium text-sm mb-3">Photos (max 5)</h2>
+
+                        {(photosExistantes.length > 0 || nouvellesPreviews.length > 0) && (
+                            <div className="flex gap-2 mb-3 flex-wrap">
+                                {photosExistantes.map((src, i) => (
+                                    <div key={`existante-${i}`} className="relative">
+                                        <img src={src} alt="" className="w-20 h-16 object-cover rounded-lg border border-gray-100" />
+                                        <button
+                                            type="button"
+                                            onClick={() => retirerPhotoExistante(i)}
+                                            className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full text-xs flex items-center justify-center"
+                                            aria-label="Retirer cette photo"
+                                        >
+                                            ✕
+                                        </button>
+                                    </div>
+                                ))}
+                                {nouvellesPreviews.map((src, i) => (
+                                    <div key={`nouvelle-${i}`} className="relative">
+                                        <img src={src} alt="" className="w-20 h-16 object-cover rounded-lg border border-primary-200" />
+                                        <button
+                                            type="button"
+                                            onClick={() => retirerNouvellePhoto(i)}
+                                            className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full text-xs flex items-center justify-center"
+                                            aria-label="Retirer cette photo"
+                                        >
+                                            ✕
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                        {totalPhotos < 5 && (
+                            <input
+                                type="file"
+                                accept="image/jpeg,image/png,image/webp"
+                                multiple
+                                onChange={ajouterPhotos}
+                                className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-primary-50 file:text-primary-600 hover:file:bg-primary-100"
+                            />
+                        )}
+                        <p className="text-xs text-gray-400 mt-1">{totalPhotos}/5 photo(s)</p>
+                        {photoError && <p className="text-xs text-red-500 mt-1">{photoError}</p>}
                     </div>
 
                     {/* Description */}

@@ -4,20 +4,20 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useRouter } from 'next/navigation';
-import { useRequireAbonnement } from '../../../hooks/useAuth';
+import { useRequireAuth } from '../../../hooks/useAuth';
 import { Navbar } from '../../../components/layout/Navbar';
 import api from '../../../lib/api';
 
 const schema = z.object({
-  type:           z.enum(['LOGEMENT_DISPONIBLE', 'PLACE_EN_COLOCATION']),
-  ville:          z.string().min(2, 'Ville requise'),
-  adresse:        z.string().optional(),
-  quartier:       z.string().optional(),
-  loyerTotal:     z.number({ invalid_type_error: 'Montant requis' }).min(1),
-  nbPlaces:       z.number().min(2).max(10),
-  caution:        z.number().optional(),
-  description:    z.string().optional(),
-  equipements:    z.array(z.string()).optional(),
+  type: z.enum(['LOGEMENT_DISPONIBLE', 'PLACE_EN_COLOCATION']),
+  ville: z.string().min(2, 'Ville requise'),
+  adresse: z.string().optional(),
+  quartier: z.string().optional(),
+  loyerTotal: z.number({ invalid_type_error: 'Montant requis' }).min(1),
+  nbPlaces: z.number().min(2).max(10),
+  caution: z.number().optional(),
+  description: z.string().optional(),
+  equipements: z.array(z.string()).optional(),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -26,7 +26,7 @@ const VILLES = ['Cotonou', 'Porto-Novo', 'Parakou', 'Abomey-Calavi', 'Bohicon', 
 const EQUIPEMENTS_LISTE = ['wifi', 'eau', 'électricité', 'cuisine', 'meublé', 'transport', 'gardien', 'parking'];
 
 export default function CreerAnnoncePage() {
-  const { user, isLoading } = useRequireAbonnement();
+  const { user, isLoading } = useRequireAuth();
   const router = useRouter();
   const [photos, setPhotos] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
@@ -91,7 +91,7 @@ export default function CreerAnnoncePage() {
             <h2 className="font-medium text-sm mb-3">Type d'annonce</h2>
             <div className="grid grid-cols-2 gap-3">
               {([
-                ['LOGEMENT_DISPONIBLE', 'Logement disponible', 'Je propose un logement entier ou des chambres'],
+                ['LOGEMENT_DISPONIBLE', 'Chambre à louer disponible', 'Je propose un logement entier ou des chambres'],
                 ['PLACE_EN_COLOCATION', 'Place en colocation', 'Je cherche des colocataires pour rejoindre ma coloc'],
               ] as const).map(([val, label, desc]) => (
                 <label key={val} className={`border rounded-xl p-3 cursor-pointer transition-all ${watch('type') === val ? 'border-primary-400 bg-primary-50' : 'border-gray-200 hover:border-gray-300'}`}>
@@ -130,17 +130,13 @@ export default function CreerAnnoncePage() {
 
           {/* Loyer */}
           <div className="card">
-            <h2 className="font-medium text-sm mb-3">Loyer & places</h2>
-            <div className="grid grid-cols-3 gap-3">
+            <h2 className="font-medium text-sm mb-3">Loyer</h2>
+            <input type="hidden" {...register('nbPlaces', { valueAsNumber: true })} />
+            <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="block text-sm text-gray-700 mb-1">Loyer total (FCFA) <span className="text-red-400">*</span></label>
                 <input type="number" {...register('loyerTotal', { valueAsNumber: true })} className="input" placeholder="25000" />
                 {errors.loyerTotal && <p className="text-xs text-red-500 mt-1">{errors.loyerTotal.message}</p>}
-              </div>
-              <div>
-                <label className="block text-sm text-gray-700 mb-1">Nb de places <span className="text-red-400">*</span></label>
-                <input type="number" min={2} max={10} {...register('nbPlaces', { valueAsNumber: true })} className="input" />
-                {errors.nbPlaces && <p className="text-xs text-red-500 mt-1">{errors.nbPlaces.message}</p>}
               </div>
               <div>
                 <label className="block text-sm text-gray-700 mb-1">Caution (FCFA)</label>
@@ -158,11 +154,10 @@ export default function CreerAnnoncePage() {
                   key={eq}
                   type="button"
                   onClick={() => toggleEquipement(eq)}
-                  className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${
-                    equipements.includes(eq)
+                  className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${equipements.includes(eq)
                       ? 'bg-primary-400 text-white border-primary-400'
                       : 'border-gray-200 text-gray-600 hover:border-primary-300'
-                  }`}
+                    }`}
                 >
                   {eq}
                 </button>

@@ -92,16 +92,43 @@ export const creerAnnonce = async (req: AuthRequest, res: Response) => {
 };
 
 export const modifierAnnonce = async (req: AuthRequest, res: Response) => {
-  const annonce = await prisma.annonce.findUnique({ where: { id: req.params.id } });
-  if (!annonce) return res.status(404).json({ error: 'Annonce introuvable' });
-  if (annonce.proprietaireId !== req.user!.id && req.user!.typeCompte !== 'ADMIN') {
-    return res.status(403).json({ error: 'Non autorise' });
+  try {
+    const annonce = await prisma.annonce.findUnique({ where: { id: req.params.id } });
+    if (!annonce) return res.status(404).json({ error: 'Annonce introuvable' });
+    if (annonce.proprietaireId !== req.user!.id && req.user!.typeCompte !== 'ADMIN') {
+      return res.status(403).json({ error: 'Non autorise' });
+    }
+
+    const { type, adresse, quartier, ville, loyerTotal, nbPlaces, nbColocataires, caution, description, equipements, photosExistantes } = req.body;
+
+    // Photos que l'utilisateur a choisi de conserver (URLs déjà en base, filtrées côté front)
+    let photosConservees: string[] = annonce.photos;
+    if (photosExistantes !== undefined) {
+      try { photosConservees = JSON.parse(photosExistantes); } catch { /* on garde les photos actuelles si parsing invalide */ }
+    }
+
+    // Nouvelles photos uploadées et compressées vers Cloudinary
+    const nouvellesPhotos = (req.files as Express.Multer.File[] | undefined)?.map(f => f.path) || [];
+    const photos = [...photosConservees, ...nouvellesPhotos].slice(0, 5);
+
+    const data: any = { photos };
+    if (type !== undefined) data.type = type;
+    if (adresse !== undefined) data.adresse = adresse;
+    if (quartier !== undefined) data.quartier = quartier;
+    if (ville !== undefined) data.ville = ville;
+    if (loyerTotal !== undefined) data.loyerTotal = Number(loyerTotal);
+    if (nbPlaces !== undefined) data.nbPlaces = Number(nbPlaces);
+    if (nbColocataires !== undefined) data.nbColocataires = Number(nbColocataires);
+    if (caution !== undefined) data.caution = caution ? Number(caution) : null;
+    if (description !== undefined) data.description = description;
+    if (equipements !== undefined) data.equipements = typeof equipements === 'string' ? JSON.parse(equipements) : equipements;
+
+    const updated = await prisma.annonce.update({ where: { id: req.params.id }, data });
+    return res.json(updated);
+  } catch (error) {
+    console.error('[modifierAnnonce]', error);
+    return res.status(500).json({ error: 'Erreur serveur lors de la modification' });
   }
-  const updated = await prisma.annonce.update({
-    where: { id: req.params.id },
-    data: req.body,
-  });
-  res.json(updated);
 };
 
 export const supprimerAnnonce = async (req: AuthRequest, res: Response) => {
@@ -116,4 +143,3 @@ export const supprimerAnnonce = async (req: AuthRequest, res: Response) => {
   });
   res.json({ message: 'Annonce supprimee' });
 };
-

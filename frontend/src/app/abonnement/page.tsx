@@ -36,8 +36,8 @@ export default function AbonnementPage() {
   // Charger données utilisateur
   useEffect(() => {
     if (!user) return;
-    abonnementsApi.statut().then(r => setStatut(r.data)).catch(() => {});
-    abonnementsApi.historique().then(r => setHistorique(r.data)).catch(() => {});
+    abonnementsApi.statut().then(r => setStatut(r.data)).catch(() => { });
+    abonnementsApi.historique().then(r => setHistorique(r.data)).catch(() => { });
   }, [user]);
 
   // Écouter les messages postMessage de KKiaPay
@@ -182,7 +182,7 @@ export default function AbonnementPage() {
           </div>
 
           <div style={{ marginBottom: 20 }}>
-            {['Acces a toutes les annonces', 'Messagerie avec les proprietaires', 'Gestion de vos colocations', 'Support prioritaire'].map((f, i) => (
+            {['Contacter les proprietaires via la messagerie', 'Messagerie illimitee', 'Gestion de vos colocations', 'Support prioritaire'].map((f, i) => (
               <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '5px 0', fontSize: 13, color: '#475569' }}>
                 <span style={{ color: '#16a34a', fontWeight: 700 }}>✓</span> {f}
               </div>

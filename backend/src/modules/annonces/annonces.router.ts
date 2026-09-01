@@ -3,7 +3,7 @@ import multer from 'multer';
 import path from 'path';
 import sharp from 'sharp';
 import { body } from 'express-validator';
-import { authenticate, requireAbonnementActif } from '../../middlewares/auth.middleware';
+import { authenticate } from '../../middlewares/auth.middleware';
 import { validate } from '../../middlewares/validate.middleware';
 import cloudinary from '../../config/cloudinary'; // adapte le chemin
 import {
@@ -82,7 +82,6 @@ annoncesRouter.get('/:id', getAnnonce);
 annoncesRouter.post(
   '/',
   authenticate,
-  requireAbonnementActif,
   upload.array('photos', 5),
   compressAndUploadImages,
   [
@@ -95,5 +94,11 @@ annoncesRouter.post(
   creerAnnonce
 );
 
-annoncesRouter.put('/:id', authenticate, modifierAnnonce);
+annoncesRouter.put(
+  '/:id',
+  authenticate,
+  upload.array('photos', 5),
+  compressAndUploadImages,
+  modifierAnnonce
+);
 annoncesRouter.delete('/:id', authenticate, supprimerAnnonce);
