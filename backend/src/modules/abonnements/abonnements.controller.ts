@@ -111,24 +111,51 @@ async function confirmerAbonnement(referenceOperateur: string, referenceInterne:
         abonnement.utilisateur.prenom,
         abonnement.operateur,
         fin
-      ).catch(() => {}); // Ne pas bloquer si l'email échoue
+      ).catch(() => { }); // Ne pas bloquer si l'email échoue
     }
   }
 
   return result;
 }
 
-export const confirmerKkiapay = async (req: AuthRequest, res: Response) => {
+export const confirmerFedapay = async (req: AuthRequest, res: Response) => {
   const { transactionId } = req.body;
   const userId = req.user!.id;
 
   if (!transactionId) return res.status(400).json({ error: 'transactionId requis' });
 
   try {
+    // Anti-rejeu : cette transaction n'a pas deja servi a activer un abonnement
     const existing = await prisma.abonnement.findFirst({
-      where: { referenceOp: transactionId, statut: 'ACTIF' },
+      where: { referenceOp: String(transactionId), statut: 'ACTIF' },
     });
     if (existing) return res.status(409).json({ error: 'Transaction deja utilisee' });
+
+    // Verification serveur-a-serveur aupres de FedaPay (ne jamais faire confiance au client seul)
+    const environment = process.env.FEDAPAY_ENVIRONMENT || 'sandbox';
+    const baseUrl = environment === 'live' ? 'https://api.fedapay.com' : 'https://sandbox-api.fedapay.com';
+
+    const verifResponse = await fetch(`${baseUrl}/v1/transactions/${transactionId}`, {
+      headers: { 'Authorization': `Bearer ${process.env.FEDAPAY_SECRET_KEY}` },
+    });
+
+    if (!verifResponse.ok) {
+      return res.status(400).json({ error: 'Transaction FedaPay introuvable' });
+    }
+
+    const verifData = (await verifResponse.json()) as { 'v1/transaction'?: { status?: string; amount?: number } };
+    const transaction = verifData['v1/transaction'];
+
+    if (!transaction) {
+      return res.status(400).json({ error: 'Reponse FedaPay invalide' });
+    }
+    if (transaction.status !== 'approved') {
+      return res.status(400).json({ error: `Transaction non approuvee (statut : ${transaction.status})` });
+    }
+    if (transaction.amount !== 300) {
+      console.warn('[FedaPay] Montant inattendu pour', transactionId, ':', transaction.amount);
+      return res.status(400).json({ error: 'Montant de la transaction invalide' });
+    }
 
     const now = new Date();
     const fin = new Date(now);
@@ -137,9 +164,9 @@ export const confirmerKkiapay = async (req: AuthRequest, res: Response) => {
     const abonnement = await prisma.abonnement.create({
       data: {
         utilisateurId: userId,
-        operateur: 'MOMO',
+        operateur: 'FEDAPAY',
         montant: 300,
-        referenceOp: transactionId,
+        referenceOp: String(transactionId),
         statut: 'ACTIF',
         datePaiement: now,
         periodeDebut: now,
@@ -152,12 +179,12 @@ export const confirmerKkiapay = async (req: AuthRequest, res: Response) => {
       sendPaymentConfirmationEmail(
         abonnement.utilisateur.email,
         abonnement.utilisateur.prenom,
-        'KKIAPAY',
+        'FEDAPAY',
         fin
-      ).catch(() => {});
+      ).catch(() => { });
     }
 
-    console.log('[KKiaPay] Abonnement active pour', userId, '- transaction', transactionId);
+    console.log('[FedaPay] Abonnement active pour', userId, '- transaction', transactionId);
 
     return res.json({
       message: 'Abonnement active avec succes',
@@ -169,7 +196,7 @@ export const confirmerKkiapay = async (req: AuthRequest, res: Response) => {
       },
     });
   } catch (err) {
-    console.error('[confirmerKkiapay]', err);
+    console.error('[confirmerFedapay]', err);
     return res.status(500).json({ error: 'Erreur serveur' });
   }
 };

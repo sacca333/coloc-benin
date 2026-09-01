@@ -9,7 +9,7 @@ import {
   webhookMoMo,
   webhookCCash,
   webhookMoov,
-  confirmerKkiapay,
+  confirmerFedapay,
 } from './abonnements.controller';
 
 export const abonnementsRouter = Router();
@@ -28,7 +28,7 @@ abonnementsRouter.post(
 
 abonnementsRouter.get('/statut', authenticate, getStatut);
 abonnementsRouter.get('/historique', authenticate, getHistorique);
-abonnementsRouter.post('/confirmer-kkiapay', authenticate, confirmerKkiapay);
+abonnementsRouter.post('/confirmer-fedapay', authenticate, confirmerFedapay);
 
 // Webhooks — pas d'auth JWT, sécurisé par signature opérateur
 export const webhooksRouter = Router();
