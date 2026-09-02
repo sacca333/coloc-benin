@@ -196,17 +196,17 @@ export function Navbar() {
   if (isPublicPage) {
     return (
       <nav className="sticky top-0 z-40 bg-sky-800 border-b border-sky-700 shadow-sm">
-        <div className="max-w-6xl mx-auto px-4 flex items-center justify-between h-14">
-          <Link href="/" className="flex items-center gap-2">
-            <img src="/logo.png" alt="logo" className="w-14 h-14 rounded-xl object-cover" />
-            <span className="font-bold text-lg">
+        <div className="max-w-6xl mx-auto px-3 sm:px-4 flex items-center justify-between h-14 gap-2">
+          <Link href="/" className="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-shrink-0">
+            <img src="/logo.png" alt="logo" className="w-9 h-9 sm:w-14 sm:h-14 rounded-lg sm:rounded-xl object-cover flex-shrink-0" />
+            <span className="font-bold text-sm sm:text-lg whitespace-nowrap">
               <span className="text-green-400">Coloc</span>
               <span className="text-yellow-400">Bénin</span>
             </span>
           </Link>
-          <div className="flex items-center gap-3">
-            <Link href="/auth/login" className="text-sm text-green-500 hover:text-white">Connexion</Link>
-            <Link href="/auth/register" className="px-4 py-2 rounded-xl bg-white text-sky-800 text-sm font-semibold hover:bg-yellow-300 transition-colors">S'inscrire</Link>
+          <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+            <Link href="/auth/login" className="text-xs sm:text-sm text-green-500 hover:text-white whitespace-nowrap">Connexion</Link>
+            <Link href="/auth/register" className="px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-white text-sky-800 text-xs sm:text-sm font-semibold hover:bg-yellow-300 transition-colors whitespace-nowrap">S'inscrire</Link>
           </div>
         </div>
       </nav>
