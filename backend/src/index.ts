@@ -52,7 +52,7 @@ app.use(express.urlencoded({ extended: true }));
 // Rate limiting gÃ©nÃ©ral
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: process.env.NODE_ENV === 'production' ? 100 : 500, // 500 en dev, 100 en prod
+  max: process.env.NODE_ENV === 'production' ? 400 : 500, // 500 en dev, 400 en prod
   standardHeaders: true,
   legacyHeaders: false,
   skip: (req) => req.path === '/health', // ignorer health check
@@ -112,7 +112,3 @@ app.listen(PORT, () => {
 });
 
 export default app;
-
-
-
-

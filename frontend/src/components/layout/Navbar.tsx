@@ -296,12 +296,12 @@ export function Navbar() {
               {userPhoto
                 ? <img src={userPhoto} alt="" className="w-9 h-9 rounded-full object-cover flex-shrink-0" />
                 : <span className="w-9 h-9 rounded-full bg-sky-700 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">
-                  {user.prenom[0]}{user.nom[0]}
+                  {user?.prenom?.[0]}{user?.nom?.[0]}
                 </span>
               }
               <div className="text-left min-w-0 flex-1">
-                <p className="text-sm font-medium text-white truncate">{user.prenom} {user.nom}</p>
-                <p className="text-xs text-sky-400 truncate">{user.email}</p>
+                <p className="text-sm font-medium text-white truncate">{user?.prenom} {user?.nom}</p>
+                <p className="text-xs text-sky-400 truncate">{user?.email}</p>
               </div>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-4 h-4 text-sky-400 flex-shrink-0">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
@@ -382,7 +382,7 @@ export function Navbar() {
             {userPhoto
               ? <img src={userPhoto} alt="" className="w-full h-full object-cover" />
               : <span className="w-full h-full bg-sky-700 text-white flex items-center justify-center text-xs font-bold">
-                {user.prenom[0]}{user.nom[0]}
+                {user?.prenom?.[0]}{user?.nom?.[0]}
               </span>
             }
           </button>
