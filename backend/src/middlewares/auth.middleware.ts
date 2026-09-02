@@ -36,6 +36,30 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
   }
 };
 
+// Identifie l'utilisateur si un token valide est fourni, mais ne bloque jamais
+// (utile pour les routes publiques qui adaptent leur reponse selon qui consulte)
+export const optionalAuth = async (req: AuthRequest, _res: Response, next: NextFunction) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader?.startsWith('Bearer ')) return next();
+
+  const token = authHeader.split(' ')[1];
+  try {
+    const payload = jwt.verify(token, process.env.JWT_SECRET!) as {
+      id: string; email: string; typeCompte: string;
+    };
+    const user = await prisma.utilisateur.findUnique({
+      where: { id: payload.id },
+      select: { id: true, email: true, typeCompte: true, actif: true },
+    });
+    if (user && user.actif) {
+      req.user = { id: user.id, email: user.email, typeCompte: user.typeCompte };
+    }
+  } catch {
+    // Token invalide ou expire : on continue en tant qu'utilisateur anonyme
+  }
+  next();
+};
+
 export const requireAdmin = (req: AuthRequest, res: Response, next: NextFunction) => {
   if (req.user?.typeCompte !== 'ADMIN') {
     return res.status(403).json({ error: 'Accès réservé aux administrateurs' });
@@ -63,5 +87,40 @@ export const requireAbonnementActif = async (req: AuthRequest, res: Response, ne
   } catch (error) {
     console.error('[requireAbonnementActif]', error);
     return res.status(500).json({ error: 'Erreur serveur lors de la vérification de l\'abonnement' });
+  }
+};
+
+// Abonnement requis uniquement pour INITIER une conversation.
+// Si le destinataire a deja envoye un message a l'expediteur auparavant,
+// on considere que l'expediteur repond simplement : c'est gratuit.
+export const requireAbonnementPourInitierConversation = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  try {
+    const expediteurId = req.user!.id;
+    const destinataireId = req.params.userId;
+
+    const dejaContacteParDestinataire = await prisma.message.findFirst({
+      where: { expediteurId: destinataireId, destinataireId: expediteurId },
+    });
+    if (dejaContacteParDestinataire) {
+      return next(); // reponse a une conversation existante : gratuit
+    }
+
+    const abonnement = await prisma.abonnement.findFirst({
+      where: {
+        utilisateurId: expediteurId,
+        statut: 'ACTIF',
+        periodeFin: { gte: new Date() },
+      },
+    });
+    if (!abonnement) {
+      return res.status(402).json({
+        error: 'Abonnement requis',
+        message: 'Un abonnement actif est necessaire pour contacter cet utilisateur pour la premiere fois.',
+      });
+    }
+    next();
+  } catch (error) {
+    console.error('[requireAbonnementPourInitierConversation]', error);
+    return res.status(500).json({ error: 'Erreur serveur lors de la verification de l\'abonnement' });
   }
 };

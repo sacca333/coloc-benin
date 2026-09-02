@@ -1,5 +1,5 @@
 ﻿import { Router } from 'express';
-import { authenticate, requireAbonnementActif } from '../../middlewares/auth.middleware';
+import { authenticate, requireAbonnementPourInitierConversation } from '../../middlewares/auth.middleware';
 import { prisma } from '../../config/database';
 import { AuthRequest } from '../../middlewares/auth.middleware';
 import multer from 'multer';
@@ -82,7 +82,7 @@ messagerieRouter.get('/:userId', async (req: AuthRequest, res) => {
 });
 
 // POST /api/messagerie/:userId — texte
-messagerieRouter.post('/:userId', requireAbonnementActif, async (req: AuthRequest, res) => {
+messagerieRouter.post('/:userId', requireAbonnementPourInitierConversation, async (req: AuthRequest, res) => {
   try {
     const { contenu } = req.body;
     if (!contenu?.trim()) return res.status(400).json({ error: 'Message vide' });
@@ -100,7 +100,7 @@ messagerieRouter.post('/:userId', requireAbonnementActif, async (req: AuthReques
 });
 
 // POST /api/messagerie/:userId/media — photo/video
-messagerieRouter.post('/:userId/media', requireAbonnementActif, upload.single('media'), async (req: AuthRequest, res) => {
+messagerieRouter.post('/:userId/media', requireAbonnementPourInitierConversation, upload.single('media'), async (req: AuthRequest, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: 'Aucun fichier' });
     const destinataire = await prisma.utilisateur.findUnique({ where: { id: req.params.userId } });

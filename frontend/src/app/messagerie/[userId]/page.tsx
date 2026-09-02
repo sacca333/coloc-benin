@@ -10,7 +10,7 @@ import clsx from 'clsx';
 export default function ConversationPage() {
   const { userId } = useParams<{ userId: string }>();
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, abonnementActif } = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
   const [contenu, setContenu] = useState('');
   const [loading, setLoading] = useState(true);
@@ -24,9 +24,17 @@ export default function ConversationPage() {
   const [modalBlocage, setModalBlocage] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
   const [toast, setToast] = useState<{ type: 'success' | 'error'; msg: string } | null>(null);
+  const [telephoneInterlocuteur, setTelephoneInterlocuteur] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const optionsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!abonnementActif || !userId) return;
+    api.get(`/users/${userId}/contact`)
+      .then(r => setTelephoneInterlocuteur(r.data.telephone))
+      .catch(() => setTelephoneInterlocuteur(null));
+  }, [abonnementActif, userId]);
 
   const showToast = (type: 'success' | 'error', msg: string) => {
     setToast({ type, msg });
@@ -222,6 +230,19 @@ export default function ConversationPage() {
           </p>
           <p className="text-xs text-sky-300">En ligne</p>
         </div>
+
+        {telephoneInterlocuteur && (
+          <a
+            href={`tel:${telephoneInterlocuteur}`}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-500 hover:bg-green-600 text-white text-xs font-semibold transition-colors flex-shrink-0"
+            title={`Appeler ${interlocuteurInfo?.prenom}`}
+          >
+            <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5">
+              <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
+            </svg>
+            Appeler
+          </a>
+        )}
 
 
         {/* Bouton 3 points */}

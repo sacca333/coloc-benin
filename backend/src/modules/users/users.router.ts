@@ -112,3 +112,31 @@ usersRouter.get('/:id', async (req: AuthRequest, res: Response) => {
     return res.status(500).json({ error: "Erreur serveur lors de la recuperation de l utilisateur" });
   }
 });
+
+// Numero de telephone accessible uniquement aux abonnes actifs (pour appeler directement
+// un annonceur qui ne repond pas dans la messagerie).
+usersRouter.get('/:id/contact', async (req: AuthRequest, res: Response) => {
+  try {
+    const abonnement = await prisma.abonnement.findFirst({
+      where: {
+        utilisateurId: req.user!.id,
+        statut: 'ACTIF',
+        periodeFin: { gte: new Date() },
+      },
+    });
+    if (!abonnement) {
+      return res.status(402).json({ error: 'Abonnement requis pour voir les coordonnees de contact' });
+    }
+
+    const user = await prisma.utilisateur.findUnique({
+      where: { id: req.params.id },
+      select: { telephone: true },
+    });
+    if (!user) return res.status(404).json({ error: 'Utilisateur introuvable' });
+
+    return res.json({ telephone: user.telephone || null });
+  } catch (error) {
+    console.error('[getContact]', error);
+    return res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
