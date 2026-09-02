@@ -196,8 +196,8 @@ export default function CreerAnnoncePage() {
           </div>
 
           <div className="flex gap-3">
-            <button type="submit" disabled={isSubmitting} className="btn-primary bg-blue-500 hover:bg-blue-600 text-white flex-1">Annuler</button>
-            <button type="submit" disabled={isSubmitting} className="btn-primary flex-1">
+            <button type="button" onClick={() => router.back()} className="btn-outline border-blue-500 text-blue-600 hover:bg-blue-50 flex-1">Annuler</button>
+            <button type="submit" disabled={isSubmitting} className="btn-primary bg-blue-500 hover:bg-blue-600 text-white flex-1">
               {isSubmitting ? 'Publication...' : 'Publier l\'annonce'}
             </button>
           </div>
