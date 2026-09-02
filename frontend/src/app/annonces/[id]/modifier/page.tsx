@@ -314,7 +314,7 @@ export default function ModifierAnnoncePage() {
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            className="btn-primary flex-1"
+                            className="btn-primary bg-blue-500 hover:bg-blue-600 text-white flex-1"
                         >
                             {isSubmitting ? 'Enregistrement...' : 'Enregistrer les modifications'}
                         </button>

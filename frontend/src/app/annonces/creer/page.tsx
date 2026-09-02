@@ -155,8 +155,8 @@ export default function CreerAnnoncePage() {
                   type="button"
                   onClick={() => toggleEquipement(eq)}
                   className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${equipements.includes(eq)
-                      ? 'bg-primary-400 text-white border-primary-400'
-                      : 'border-gray-200 text-gray-600 hover:border-primary-300'
+                    ? 'bg-primary-400 text-white border-primary-400'
+                    : 'border-gray-200 text-gray-600 hover:border-primary-300'
                     }`}
                 >
                   {eq}
@@ -196,7 +196,7 @@ export default function CreerAnnoncePage() {
           </div>
 
           <div className="flex gap-3">
-            <button type="button" onClick={() => router.back()} className="btn-outline flex-1">Annuler</button>
+            <button type="submit" disabled={isSubmitting} className="btn-primary bg-blue-500 hover:bg-blue-600 text-white flex-1">Annuler</button>
             <button type="submit" disabled={isSubmitting} className="btn-primary flex-1">
               {isSubmitting ? 'Publication...' : 'Publier l\'annonce'}
             </button>
