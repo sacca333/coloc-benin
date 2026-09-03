@@ -106,6 +106,7 @@ model Annonce {
   placesRestantes Int           @default(0)
   nbColocataires  Int?
   caution         Int?
+  telephone       String?
   description     String?
   equipements     String[]
   photos          String[]

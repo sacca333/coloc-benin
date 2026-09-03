@@ -16,6 +16,10 @@ const schema = z.object({
     loyerTotal: z.number({ invalid_type_error: 'Montant requis' }).min(1),
     nbPlaces: z.number().min(2).max(10),
     caution: z.number().optional(),
+    telephone: z.string().optional().refine(
+        (val) => !val || /^[0-9+ ]{8,20}$/.test(val),
+        { message: 'Numéro de téléphone invalide' }
+    ),
     description: z.string().optional(),
     equipements: z.array(z.string()).optional(),
 });
@@ -57,6 +61,7 @@ export default function ModifierAnnoncePage() {
                 loyerTotal: a.loyerTotal,
                 nbPlaces: a.nbPlaces,
                 caution: a.caution || undefined,
+                telephone: a.telephone || '',
                 description: a.description || '',
                 equipements: a.equipements || [],
             });
@@ -222,6 +227,22 @@ export default function ModifierAnnoncePage() {
                                 />
                             </div>
                         </div>
+                    </div>
+
+                    {/* Téléphone */}
+                    <div className="card">
+                        <h2 className="font-medium text-sm mb-3">Téléphone (optionnel)</h2>
+                        <input
+                            type="tel"
+                            {...register('telephone')}
+                            className="input"
+                            placeholder="Ex : 97 00 00 00"
+                        />
+                        {errors.telephone && <p className="text-xs text-red-500 mt-1">{errors.telephone.message}</p>}
+                        <p className="text-xs text-gray-400 mt-2">
+                            Ce numéro ne sera jamais affiché publiquement. Il sera envoyé automatiquement, dans un message,
+                            à la première personne qui vous contacte via cette annonce.
+                        </p>
                     </div>
 
                     {/* Équipements */}

@@ -38,8 +38,7 @@ export const getAnnonce = async (req: Request, res: Response) => {
 
 export const creerAnnonce = async (req: AuthRequest, res: Response) => {
   try {
-    const { type, adresse, quartier, ville, loyerTotal, nbPlaces, nbColocataires, caution, description, equipements } = req.body;
-    const photos = (req.files as Express.Multer.File[] | undefined)?.map(f => f.path) || [];
+    const { type, adresse, quartier, ville, loyerTotal, nbPlaces, nbColocataires, caution, telephone, description, equipements } = req.body; const photos = (req.files as Express.Multer.File[] | undefined)?.map(f => f.path) || [];
 
     const annonce = await prisma.annonce.create({
       data: {
@@ -53,6 +52,7 @@ export const creerAnnonce = async (req: AuthRequest, res: Response) => {
         placesRestantes: Number(nbPlaces),
         nbColocataires: nbColocataires ? Number(nbColocataires) : undefined,
         caution: caution ? Number(caution) : undefined,
+        telephone: telephone?.trim() || undefined,
         description,
         equipements: equipements ? JSON.parse(equipements) : [],
         photos,
@@ -99,8 +99,7 @@ export const modifierAnnonce = async (req: AuthRequest, res: Response) => {
       return res.status(403).json({ error: 'Non autorise' });
     }
 
-    const { type, adresse, quartier, ville, loyerTotal, nbPlaces, nbColocataires, caution, description, equipements, photosExistantes } = req.body;
-
+    const { type, adresse, quartier, ville, loyerTotal, nbPlaces, nbColocataires, caution, telephone, description, equipements, photosExistantes } = req.body;
     // Photos que l'utilisateur a choisi de conserver (URLs déjà en base, filtrées côté front)
     let photosConservees: string[] = annonce.photos;
     if (photosExistantes !== undefined) {
@@ -120,6 +119,7 @@ export const modifierAnnonce = async (req: AuthRequest, res: Response) => {
     if (nbPlaces !== undefined) data.nbPlaces = Number(nbPlaces);
     if (nbColocataires !== undefined) data.nbColocataires = Number(nbColocataires);
     if (caution !== undefined) data.caution = caution ? Number(caution) : null;
+    if (telephone !== undefined) data.telephone = telephone?.trim() || null;
     if (description !== undefined) data.description = description;
     if (equipements !== undefined) data.equipements = typeof equipements === 'string' ? JSON.parse(equipements) : equipements;
 

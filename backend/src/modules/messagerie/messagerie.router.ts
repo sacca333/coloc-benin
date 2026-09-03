@@ -84,14 +84,44 @@ messagerieRouter.get('/:userId', async (req: AuthRequest, res) => {
 // POST /api/messagerie/:userId — texte
 messagerieRouter.post('/:userId', requireAbonnementPourInitierConversation, async (req: AuthRequest, res) => {
   try {
-    const { contenu } = req.body;
+    const { contenu, annonceId } = req.body;
     if (!contenu?.trim()) return res.status(400).json({ error: 'Message vide' });
     const destinataire = await prisma.utilisateur.findUnique({ where: { id: req.params.userId } });
     if (!destinataire || !destinataire.actif) return res.status(404).json({ error: 'Destinataire introuvable' });
+
+    // Est-ce le tout premier message entre ces deux utilisateurs ?
+    const dejaEchange = await prisma.message.findFirst({
+      where: {
+        OR: [
+          { expediteurId: req.user!.id, destinataireId: req.params.userId },
+          { expediteurId: req.params.userId, destinataireId: req.user!.id },
+        ],
+      },
+      select: { id: true },
+    });
+
     const message = await prisma.message.create({
       data: { expediteurId: req.user!.id, destinataireId: req.params.userId, contenu: contenu.trim() },
       include: { expediteur: { select: { id: true, nom: true, prenom: true, photo: true } } },
     });
+
+    // Premier contact concernant une annonce : on envoie automatiquement le numero du proprietaire, si renseigne
+    if (!dejaEchange && annonceId) {
+      const annonce = await prisma.annonce.findUnique({
+        where: { id: String(annonceId) },
+        select: { proprietaireId: true, telephone: true },
+      });
+      if (annonce && annonce.proprietaireId === req.params.userId && annonce.telephone) {
+        await prisma.message.create({
+          data: {
+            expediteurId: req.params.userId,
+            destinataireId: req.user!.id,
+            contenu: `Appelez-moi ou écrivez-moi sur ce numéro si je tarde à répondre ici : ${annonce.telephone}`,
+          },
+        });
+      }
+    }
+
     return res.status(201).json(message);
   } catch (error) {
     console.error('[envoyerMessage]', error);

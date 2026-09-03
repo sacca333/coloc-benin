@@ -35,6 +35,7 @@ export interface Annonce {
   nbPlaces: number;
   nbColocataires?: number;
   caution?: number;
+  telephone?: string;
   description?: string;
   equipements: string[];
   photos: string[];

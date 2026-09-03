@@ -84,8 +84,8 @@ export const abonnementsApi = {
 export const messagerieApi = {
   conversations: () => api.get('/messagerie/conversations'),
   messages: (userId: string) => api.get(`/messagerie/${userId}`),
-  envoyer: (destinataireId: string, contenu: string) =>
-    api.post(`/messagerie/${destinataireId}`, { contenu }),
+  envoyer: (destinataireId: string, contenu: string, annonceId?: string) =>
+    api.post(`/messagerie/${destinataireId}`, { contenu, annonceId }),
 };
 
 // Demandes colocation

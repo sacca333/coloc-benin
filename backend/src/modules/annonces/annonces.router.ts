@@ -89,6 +89,11 @@ annoncesRouter.post(
     body('ville').trim().notEmpty().withMessage('Ville requise'),
     body('loyerTotal').isNumeric().withMessage('Loyer invalide'),
     body('nbPlaces').isInt({ min: 2, max: 10 }),
+    body('telephone')
+      .optional({ checkFalsy: true })
+      .trim()
+      .matches(/^[0-9+ ]{8,20}$/)
+      .withMessage('Numero de telephone invalide'),
   ],
   validate,
   creerAnnonce

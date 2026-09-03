@@ -26,7 +26,7 @@ export default function AnnonceDetailPage() {
   const handleContacter = async () => {
     if (!annonce || !messageEnvoi.trim()) return;
     try {
-      await messagerieApi.envoyer(annonce.proprietaire.id, messageEnvoi);
+      await messagerieApi.envoyer(annonce.proprietaire.id, messageEnvoi, annonce.id);
       setMessageSent(true);
       router.push(`/messagerie/${annonce.proprietaire.id}`);
     } catch { }
