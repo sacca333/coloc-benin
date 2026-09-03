@@ -7,8 +7,6 @@ import { Footer } from '../components/layout/Footer';
 import { useAuth } from '../hooks/useAuth';
 
 
-
-
 const SLIDES = [
   {
     image: '/trouvez.jpeg',
@@ -29,8 +27,8 @@ const SLIDES = [
   {
     image: '/payement.jpeg',
     icon: '📱',
-    title: 'Payez avec abonnemenet par Mobile Money',
-    desc: "Abonnement via MTN MoMo, C'Cash ou Moov Money. Seulement 300 FCFA par mois.",
+    title: 'Un abonnement, des contacts illimités',
+    desc: "Publier une annonce est gratuit. Abonnez-vous une fois par mois via MTN MoMo, Moov Money ou carte bancaire (300 FCFA) et contactez autant de colocataires que vous voulez pendant 30 jours.",
     badge: 'Paiement mobile',
   },
 
@@ -62,12 +60,10 @@ export default function HomePage() {
           />
           <div className="absolute inset-0 flex items-center justify-center text-center px-4">
             <div className="max-w-3xl mx-auto w-full">
-              <span className="inline-block bg-white/20 text-white text-xs font-semibold px-4 py-1.5 rounded-full mb-4 backdrop-blur-sm border border-white/30">
-                Plateforme N1 de colocation étudiante au Bénin
-              </span>
+              
               <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight drop-shadow-lg">
-                Trouvez votre colocation
-                <span className="block text-yellow-300 mt-1">idéale au Bénin</span>
+                Trouvez ou publiez votre Chambre à Louer ou
+                <span className="block text-yellow-300 mt-1">Colocation idéale au Bénin</span>
               </h1>
 
               <div className="mt-6 flex items-center justify-center gap-3 flex-wrap">
@@ -80,20 +76,13 @@ export default function HomePage() {
                   </Link>
                 ) : (
                   <Link href="/auth/register" className="px-6 sm:px-8 py-2.5 sm:py-3 text-sm sm:text-base font-semibold rounded-2xl text-white border-2 border-white/60 hover:bg-white/20 transition-all duration-200 backdrop-blur-sm active:scale-95">
-                    Créer un compte - 300 FCFA/mois
+                    Créer un compte gratuitement
                   </Link>
                 )}
               </div>
             </div>
           </div>
         </section>
-
-
-
-
-
-
-
 
         {/* Section héro + stats */}
         <section className="w-full px-4 py-12 bg-gradient-to-b from-[#1a2744]/30 to-[#1a2744]/80 text-white">
@@ -107,7 +96,7 @@ export default function HomePage() {
               {/* Texte gauche */}
               <div className="relative z-10">
                 <span className="inline-block bg-purple-500/20 text-purple-300 text-xs font-medium px-3 py-1 rounded-full mb-4 tracking-wide">
-                  Plateforme étudiante · Bénin
+                  Plateforme N1 de colocation étudiante · Bénin
                 </span>
                 <h2 className="text-2xl md:text-3xl font-semibold text-white leading-snug mb-3">
                   La colocation étudiante<br />
@@ -115,9 +104,9 @@ export default function HomePage() {
                 </h2>
                 <p className=" md:text-sm text-slate-400 leading-relaxed mb-6">
                   Que vous soyez à <strong className="text-slate-300">Cotonou, Parakou, Abomey-Calavi</strong> ou ailleurs au Bénin,{' '}
-                  <strong className=" text-slate-300">ColocBénin</strong> vous permet de trouver votre colocation idéale ou une chambre à louer — rapidement et en toute confiance.
+                  <strong className=" text-slate-300">ColocBénin</strong> vous permet de trouver une chambre à louer ou une colocation idéale — rapidement et en toute confiance.
                   <br />
-                  <strong className="text-slate-300">300 FCFA/mois</strong>.
+                  Publier une annonce est <strong className="text-slate-300">100% gratuit</strong>. Abonnez-vous une seule fois pour <strong className="text-slate-300">300 FCFA/mois</strong> et consultez autant d'annonces de chambres à louer ou de colocataires que vous voulez pendant tout le mois.
                 </p>
                 <Link href="/auth/register" className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-5 py-2.5 rounded-xl transition-colors">
                   Créer mon compte gratuitement
@@ -137,8 +126,8 @@ export default function HomePage() {
                   />
                 </div>
                 <div className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-center">
-                  <p className="text-xs text-slate-400 mb-1">Abonnement mensuel</p>
-                  <p className="text-sm font-semibold text-yellow-400">300 FCFA seulement !</p>
+                  <p className="text-xs text-slate-400 mb-1">Contacts illimités pendant 30 jours</p>
+                  <p className="text-sm font-semibold text-yellow-400">300 FCFA/mois seulement !</p>
                 </div>
               </div>
             </div>
@@ -208,7 +197,7 @@ export default function HomePage() {
               </>
             ) : (
               <>
-                <h2 className="text-xl font-semibold text-green-700 mb-2">Prêt à trouver votre Coloc ?</h2>
+                <h2 className="text-xl font-semibold text-green-700 mb-2">Prêt à trouver votre chambre ou un Coloc ?</h2>
                 <p className="text-sm text-black-800 mb-6">Rejoignez des centaines d'étudiants béninois déjà inscrits.</p>
                 <Link href="/auth/register" className="px-8 py-3 text-base font-semibold rounded-2xl text-white bg-blue-700 hover:bg-blue-800 transition-all inline-block">S'inscrire gratuitement</Link>
               </>
@@ -220,14 +209,3 @@ export default function HomePage() {
     </>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
