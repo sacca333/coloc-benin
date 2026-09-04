@@ -1,12 +1,12 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useRouter } from 'next/navigation';
 import { useRequireAuth } from '../../../hooks/useAuth';
 import { Navbar } from '../../../components/layout/Navbar';
-import api from '../../../lib/api';
+import api, { villesApi } from '../../../lib/api';
 
 const schema = z.object({
   type: z.enum(['LOGEMENT_DISPONIBLE', 'PLACE_EN_COLOCATION']),
@@ -26,7 +26,6 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
-const VILLES = ['Cotonou', 'Porto-Novo', 'Parakou', 'Abomey-Calavi', 'Bohicon', 'Natitingou', 'Ouidah', 'Lokossa'];
 const EQUIPEMENTS_LISTE = ['wifi', 'eau', 'électricité', 'cuisine', 'meublé', 'transport', 'gardien', 'parking'];
 
 export default function CreerAnnoncePage() {
@@ -36,6 +35,11 @@ export default function CreerAnnoncePage() {
   const [previews, setPreviews] = useState<string[]>([]);
   const [equipements, setEquipements] = useState<string[]>([]);
   const [serverError, setServerError] = useState('');
+  const [villes, setVilles] = useState<string[]>([]);
+
+  useEffect(() => {
+    villesApi.lister().then(r => setVilles(r.data)).catch(() => setVilles([]));
+  }, []);
 
   const { register, handleSubmit, setValue, watch, formState: { errors, isSubmitting } } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -115,7 +119,7 @@ export default function CreerAnnoncePage() {
                 <label className="block text-sm text-gray-700 mb-1">Ville <span className="text-red-400">*</span></label>
                 <select {...register('ville')} className="input">
                   <option value="">Sélectionner une ville</option>
-                  {VILLES.map(v => <option key={v} value={v}>{v}</option>)}
+                  {villes.map(v => <option key={v} value={v}>{v}</option>)}
                 </select>
                 {errors.ville && <p className="text-xs text-red-500 mt-1">{errors.ville.message}</p>}
               </div>

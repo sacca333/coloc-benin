@@ -5,6 +5,7 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import path from 'path';
 import { sauvegardesRouter } from './modules/sauvegardes/sauvegardes.router';
+import { villesRouter } from './modules/villes/villes.router';
 
 import { authRouter } from './modules/auth/auth.router';
 import { usersRouter } from './modules/users/users.router';
@@ -18,6 +19,8 @@ import { blocagesRouter } from './modules/blocages/blocages.router';
 const app = express();
 app.set('trust proxy', 1);
 const PORT = process.env.PORT || 4000;
+
+app.use('/api/villes', villesRouter);
 
 // â”€â”€ SÃ©curitÃ© â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.use(helmet({

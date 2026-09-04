@@ -6,7 +6,7 @@ import { z } from 'zod';
 import { useParams, useRouter } from 'next/navigation';
 import { useAuth } from '../../../../hooks/useAuth';
 import { Navbar } from '../../../../components/layout/Navbar';
-import api, { annoncesApi } from '../../../../lib/api';
+import api, { annoncesApi, villesApi } from '../../../../lib/api';
 
 const schema = z.object({
     type: z.enum(['LOGEMENT_DISPONIBLE', 'PLACE_EN_COLOCATION']),
@@ -26,7 +26,6 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
-const VILLES = ['Cotonou', 'Porto-Novo', 'Parakou', 'Abomey-Calavi', 'Bohicon', 'Natitingou', 'Ouidah', 'Lokossa'];
 const EQUIPEMENTS_LISTE = ['wifi', 'eau', 'électricité', 'cuisine', 'meublé', 'transport', 'gardien', 'parking'];
 
 export default function ModifierAnnoncePage() {
@@ -40,6 +39,11 @@ export default function ModifierAnnoncePage() {
     const [nouvellesPhotos, setNouvellesPhotos] = useState<File[]>([]);
     const [nouvellesPreviews, setNouvellesPreviews] = useState<string[]>([]);
     const [photoError, setPhotoError] = useState('');
+    const [villes, setVilles] = useState<string[]>([]);
+
+    useEffect(() => {
+        villesApi.lister().then(r => setVilles(r.data)).catch(() => setVilles([]));
+    }, []);
 
     const { register, handleSubmit, setValue, watch, reset, formState: { errors, isSubmitting } } = useForm<FormData>({
         resolver: zodResolver(schema),
@@ -183,7 +187,7 @@ export default function ModifierAnnoncePage() {
                                 </label>
                                 <select {...register('ville')} className="input">
                                     <option value="">Sélectionner une ville</option>
-                                    {VILLES.map(v => <option key={v} value={v}>{v}</option>)}
+                                    {villes.map(v => <option key={v} value={v}>{v}</option>)}
                                 </select>
                                 {errors.ville && <p className="text-xs text-red-500 mt-1">{errors.ville.message}</p>}
                             </div>

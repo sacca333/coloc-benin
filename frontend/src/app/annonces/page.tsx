@@ -2,14 +2,13 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { sauvegardesApi } from '../../lib/api';
-import { annoncesApi } from '../../lib/api';
+import { annoncesApi, villesApi } from '../../lib/api';
 import { Annonce, FiltresAnnonce } from '../../types';
 import { Navbar } from '../../components/layout/Navbar';
 import { SearchBar } from '../../components/ui/SearchBar';
 import { useAuth } from '../../hooks/useAuth';
 import clsx from 'clsx';
 
-const VILLES = ['Cotonou', 'Porto-Novo', 'Parakou', 'Abomey-Calavi', 'Bohicon', 'Natitingou'];
 const EQUIPEMENTS = ['wifi', 'eau', 'electricite', 'cuisine', 'meuble', 'transport'];
 
 export default function AnnoncesPage() {
@@ -18,6 +17,11 @@ export default function AnnoncesPage() {
   const [loading, setLoading] = useState(true);
   const [filtres, setFiltres] = useState<FiltresAnnonce>({});
   const [searchQuery, setSearchQuery] = useState('');
+  const [villes, setVilles] = useState<string[]>([]);
+
+  useEffect(() => {
+    villesApi.lister().then(r => setVilles(r.data)).catch(() => setVilles([]));
+  }, []);
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [showFilterPanel, setShowFilterPanel] = useState(false);
 
@@ -102,7 +106,7 @@ export default function AnnoncesPage() {
               <div>
                 <label className="text-xs font-semibold text-gray-500 mb-2 block uppercase tracking-wide">Ville</label>
                 <div className="flex flex-wrap gap-2">
-                  {VILLES.map(v => (
+                  {villes.map(v => (
                     <button key={v} onClick={() => updateFiltre('ville', v)}
                       className={clsx('px-3 py-1.5 rounded-full text-sm border transition-all', filtres.ville === v ? 'bg-sky-600 text-white border-transparent' : 'border-gray-200 text-gray-600 hover:border-sky-300')}>
                       {v}

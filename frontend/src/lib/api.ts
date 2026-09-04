@@ -55,6 +55,10 @@ export const authApi = {
   me: () => api.get('/auth/me'),
 };
 
+export const villesApi = {
+  lister: () => api.get<string[]>('/villes'),
+};
+
 export const annoncesApi = {
   lister: (params?: Record<string, any>) => api.get('/annonces', { params }),
   getById: (id: string) => api.get(`/annonces/${id}`),

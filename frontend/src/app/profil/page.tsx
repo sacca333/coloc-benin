@@ -1,12 +1,11 @@
 ﻿'use client';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useRequireAuth, useAuth } from '../../hooks/useAuth';
 import { Navbar } from '../../components/layout/Navbar';
-import api, { photoUrl } from '../../lib/api';
+import api, { photoUrl, villesApi } from '../../lib/api';
 
 const NIVEAUX = ['Licence 1', 'Licence 2', 'Licence 3', 'Master 1', 'Master 2', 'Doctorat', 'BTS', 'Autre'];
-const VILLES = ['Cotonou', 'Porto-Novo', 'Parakou', 'Abomey-Calavi', 'Bohicon', 'Natitingou', 'Ouidah', 'Lokossa'];
 
 function EyeIcon({ open }: { open: boolean }) {
   return open ? (
@@ -45,6 +44,11 @@ export default function ProfilPage() {
   const [pwdError, setPwdError] = useState('');
   const [photoMenuOpen, setPhotoMenuOpen] = useState(false);
   const [photoModalOpen, setPhotoModalOpen] = useState(false);
+  const [villes, setVilles] = useState<string[]>([]);
+
+  useEffect(() => {
+    villesApi.lister().then(r => setVilles(r.data)).catch(() => setVilles([]));
+  }, []);
   const photoInputRef = useRef<HTMLInputElement>(null);
 
   const { register, handleSubmit, formState: { isSubmitting } } = useForm({
@@ -175,7 +179,7 @@ export default function ProfilPage() {
                 <div><label className="block text-sm font-medium text-gray-700 mb-1">Nom</label><input {...register('nom')} className="input" /></div>
               </div>
               <div><label className="block text-sm font-medium text-gray-700 mb-1">Telephone</label><input {...register('telephone')} className="input" placeholder="+229 97000000" /></div>
-              <div><label className="block text-sm font-medium text-gray-700 mb-1">Ville</label><select {...register('ville')} className="input"><option value="">Choisir...</option>{VILLES.map(v => <option key={v} value={v}>{v}</option>)}</select></div>
+              <div><label className="block text-sm font-medium text-gray-700 mb-1">Ville</label><select {...register('ville')} className="input"><option value="">Choisir...</option>{villes.map(v => <option key={v} value={v}>{v}</option>)}</select></div>
               <div><label className="block text-sm font-medium text-gray-700 mb-1">Universite / Ecole</label><input {...register('universite')} className="input" placeholder="UAC, EPAC, HECM..." /></div>
               <div className="grid grid-cols-2 gap-3">
                 <div><label className="block text-sm font-medium text-gray-700 mb-1">Filiere</label><input {...register('filiere')} className="input" placeholder="Informatique, Droit..." /></div>
@@ -206,5 +210,3 @@ export default function ProfilPage() {
     </>
   );
 }
-
-

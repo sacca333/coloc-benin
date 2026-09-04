@@ -5,13 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { authApi } from '../../../lib/api';
-
-const VILLES_BENIN = [
-  'Cotonou', 'Porto-Novo', 'Parakou', 'Abomey-Calavi', 'Bohicon',
-  'Natitingou', 'Lokossa', 'Ouidah', 'Kandi', 'Djougou',
-  'Abomey', 'Malanville', 'Nikki', 'Savalou', 'Bassila',
-];
+import { authApi, villesApi } from '../../../lib/api';
 
 const schema = z.object({
   nom: z.string().min(2, 'Nom requis'),
@@ -34,7 +28,7 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 const NIVEAUX = ['Licence 1', 'Licence 2', 'Licence 3', 'Master 1', 'Master 2', 'Doctorat', 'BTS', 'Autre'];
 
-function VilleAutocomplete({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+function VilleAutocomplete({ value, onChange, villes }: { value: string; onChange: (v: string) => void; villes: string[] }) {
   const [input, setInput] = useState(value || '');
   const [open, setOpen] = useState(false);
   const [highlight, setHighlight] = useState(0);
@@ -51,8 +45,8 @@ function VilleAutocomplete({ value, onChange }: { value: string; onChange: (v: s
   }, []);
 
   const suggestions = input.trim()
-    ? VILLES_BENIN.filter(v => v.toLowerCase().includes(input.trim().toLowerCase()))
-    : VILLES_BENIN;
+    ? villes.filter(v => v.toLowerCase().includes(input.trim().toLowerCase()))
+    : villes;
 
   const choisir = (ville: string) => {
     setInput(ville);
@@ -100,6 +94,11 @@ export default function RegisterPage() {
   const [success, setSuccess] = useState(false);
   const [serverError, setServerError] = useState('');
   const [typeCompte, setTypeCompte] = useState<'ETUDIANT' | 'AUTRE'>('ETUDIANT');
+  const [villes, setVilles] = useState<string[]>([]);
+
+  useEffect(() => {
+    villesApi.lister().then(r => setVilles(r.data)).catch(() => setVilles([]));
+  }, []);
 
   const { register, handleSubmit, setValue, watch, formState: { errors, isSubmitting } } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -247,7 +246,7 @@ export default function RegisterPage() {
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Ville</label>
-                    <VilleAutocomplete value={watch('ville') || ''} onChange={v => setValue('ville', v)} />
+                    <VilleAutocomplete value={watch('ville') || ''} onChange={v => setValue('ville', v)} villes={villes} />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Niveau</label>
@@ -273,7 +272,7 @@ export default function RegisterPage() {
               <>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Ville</label>
-                  <VilleAutocomplete value={watch('ville') || ''} onChange={v => setValue('ville', v)} />
+                  <VilleAutocomplete value={watch('ville') || ''} onChange={v => setValue('ville', v)} villes={villes} />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Profession</label>
