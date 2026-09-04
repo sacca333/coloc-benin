@@ -20,8 +20,6 @@ const app = express();
 app.set('trust proxy', 1);
 const PORT = process.env.PORT || 4000;
 
-app.use('/api/villes', villesRouter);
-
 // â”€â”€ SÃ©curitÃ© â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.use(helmet({
   crossOriginResourcePolicy: false,
@@ -45,6 +43,10 @@ app.use(cors({
   ],
   credentials: true,
 }));
+
+// Route publique des villes : montee APRES cors() pour que le navigateur recoive bien les en-tetes CORS
+app.use('/api/villes', villesRouter);
+
 
 // Webhooks avant le parsing JSON global (pour accÃ¨s au body brut si besoin)
 app.use('/webhooks', express.json(), webhooksRouter);
