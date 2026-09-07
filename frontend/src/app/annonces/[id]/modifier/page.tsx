@@ -259,8 +259,8 @@ export default function ModifierAnnoncePage() {
                                     type="button"
                                     onClick={() => toggleEquipement(eq)}
                                     className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${equipements.includes(eq)
-                                        ? 'bg-primary-400 text-white border-primary-400'
-                                        : 'border-gray-200 text-gray-600 hover:border-primary-300'
+                                        ? 'bg-blue-500 text-white border-blue-500'
+                                        : 'border-gray-200 text-gray-600 hover:border-blue-300'
                                         }`}
                                 >
                                     {eq}
