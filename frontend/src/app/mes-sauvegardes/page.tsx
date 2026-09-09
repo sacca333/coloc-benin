@@ -68,10 +68,10 @@ export default function MesSauvegardesPage() {
                                         <div className="flex items-start justify-between gap-2">
                                             <Link href={`/annonces/${a.id}`} className="flex-1 min-w-0">
                                                 <span className={clsx('text-xs px-2 py-0.5 rounded-full font-medium', a.type === 'LOGEMENT_DISPONIBLE' ? 'bg-violet-50 text-violet-600' : 'bg-teal-50 text-teal-600')}>
-                                                    {a.type === 'LOGEMENT_DISPONIBLE' ? 'Logement' : 'Place en coloc'}
+                                                    {a.type === 'LOGEMENT_DISPONIBLE' ? 'Chambre à Louer Disponible' : 'Place en coloc'}
                                                 </span>
                                                 <p className="font-medium text-sm mt-1">{a.quartier || a.adresse || a.ville}</p>
-                                                <p className="text-xs text-gray-500">{a.ville} · {a.nbPlaces} place{a.nbPlaces > 1 ? 's' : ''}</p>
+                                                <p className="text-xs text-gray-500">{a.ville}</p>
                                             </Link>
                                             <div className="flex flex-col items-end gap-1 flex-shrink-0">
                                                 <p className="font-semibold text-sm">{a.loyerTotal.toLocaleString()} FCFA</p>

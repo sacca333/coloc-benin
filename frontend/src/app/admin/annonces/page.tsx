@@ -3,11 +3,11 @@ import { useEffect, useState, useCallback, useRef } from 'react';
 import { api, photoUrl } from '@/lib/api';
 
 const LIMIT = 20;
-const sColors: Record<string, [string,string]> = {
-  ACTIVE:    ['#065f46','#d1fae5'],
-  INACTIVE:  ['#92400e','#fef3c7'],
-  MODEREE:   ['#5b21b6','#ede9fe'],
-  SUPPRIMEE: ['#991b1b','#fee2e2'],
+const sColors: Record<string, [string, string]> = {
+  ACTIVE: ['#065f46', '#d1fae5'],
+  INACTIVE: ['#92400e', '#fef3c7'],
+  MODEREE: ['#5b21b6', '#ede9fe'],
+  SUPPRIMEE: ['#991b1b', '#fee2e2'],
 };
 
 export default function AdminAnnonces() {
@@ -52,7 +52,7 @@ export default function AdminAnnonces() {
     try {
       await api.put(`/admin/annonces/${id}/statut`, { statut: s });
       setAnnonces(prev => prev.map(a => a.id === id ? { ...a, statut: s } : a));
-    } catch {}
+    } catch { }
   };
 
   return (
@@ -141,7 +141,7 @@ export default function AdminAnnonces() {
                   </td>
                   <td className="hide-mobile">
                     <span className="badge" style={{ color: '#1e40af', background: '#dbeafe' }}>
-                      {a.type === 'LOGEMENT_DISPONIBLE' ? 'Logement' : 'Colocation'}
+                      {a.type === 'LOGEMENT_DISPONIBLE' ? 'Chambre à Louer Disponible' : 'Colocation'}
                     </span>
                   </td>
                   <td style={{ fontSize: 13, fontWeight: 700, color: '#0284c7', whiteSpace: 'nowrap' }}>{(a.loyerTotal || 0).toLocaleString()} F</td>

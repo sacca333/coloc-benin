@@ -134,7 +134,7 @@ export default function DashboardPage() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold text-gray-900 text-sm truncate">{a.quartier || a.adresse || a.ville}</p>
-                      <p className="text-xs text-gray-500">{a.ville} · {a.nbPlaces} place{a.nbPlaces > 1 ? 's' : ''}</p>
+                      <p className="text-xs text-gray-500">{a.ville}</p>
                       <p className="font-bold text-gray-900 text-sm mt-1">{a.loyerTotal.toLocaleString()} FCFA</p>
                     </div>
                   </div>
@@ -168,10 +168,10 @@ export default function DashboardPage() {
                   </div>
                   <div className="p-4">
                     <span className="text-xs px-2 py-0.5 rounded-full bg-primary-100 text-primary-700 font-medium">
-                      {annonce.type === 'LOGEMENT_DISPONIBLE' ? 'Logement' : 'Place'}
+                      {annonce.type === 'LOGEMENT_DISPONIBLE' ? 'Chambre à Louer Disponible' : 'Place'}
                     </span>
                     <h3 className="font-semibold text-gray-900 text-sm mt-2 line-clamp-2">{annonce.quartier || annonce.adresse}</h3>
-                    <p className="text-xs text-gray-500 mt-1">{annonce.ville} · {annonce.nbPlaces} place{annonce.nbPlaces > 1 ? 's' : ''}</p>
+                    <p className="text-xs text-gray-500 mt-1">{annonce.ville}</p>
                     <p className="font-bold text-gray-900 mt-3">{annonce.loyerTotal.toLocaleString()} FCFA</p>
                   </div>
                 </Link>
@@ -183,5 +183,3 @@ export default function DashboardPage() {
     </>
   );
 }
-
-

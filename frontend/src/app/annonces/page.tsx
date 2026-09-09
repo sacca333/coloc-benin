@@ -262,10 +262,10 @@ function AnnonceCard({ annonce }: { annonce: Annonce }) {
           <div className="flex items-start justify-between gap-2">
             <div>
               <span className={clsx('text-xs px-2 py-0.5 rounded-full font-medium', annonce.type === 'LOGEMENT_DISPONIBLE' ? 'bg-sky-50 text-sky-800' : 'bg-teal-50 text-teal-600')}>
-                {annonce.type === 'LOGEMENT_DISPONIBLE' ? 'Logement' : 'Place en coloc'}
+                {annonce.type === 'LOGEMENT_DISPONIBLE' ? 'Chambre à Louer Disponible' : 'Place en coloc'}
               </span>
               <h3 className="font-medium text-sm mt-1">{annonce.quartier || annonce.adresse || annonce.ville}</h3>
-              <p className="text-xs text-gray-500">{annonce.ville} · {annonce.nbPlaces} place{annonce.nbPlaces > 1 ? 's' : ''}</p>
+              <p className="text-xs text-gray-500">{annonce.ville}</p>
             </div>
             <div className="flex flex-col items-end gap-1 flex-shrink-0">
               <p className="font-semibold text-gray-900">{annonce.loyerTotal.toLocaleString()} FCFA</p>
