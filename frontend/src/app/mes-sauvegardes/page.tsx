@@ -78,9 +78,9 @@ export default function MesSauvegardesPage() {
                                                 <p className="text-xs text-gray-400">/ mois</p>
                                                 <button
                                                     onClick={() => handleSupprimer(a.id)}
-                                                    className="mt-1 text-xs text-red-400 hover:text-red-600 hover:underline"
+                                                    className="mt-2 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-red-50 text-red-500 border border-red-100 hover:bg-red-500 hover:text-white hover:border-red-500 transition-colors"
                                                 >
-                                                    Retirer
+                                                    🗑️ Retirer
                                                 </button>
                                             </div>
                                         </div>
