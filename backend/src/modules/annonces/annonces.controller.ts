@@ -3,7 +3,7 @@ import { prisma } from '../../config/database';
 import { AuthRequest } from '../../middlewares/auth.middleware';
 
 export const listerAnnonces = async (req: Request, res: Response) => {
-  const { ville, typeAnnonce, budgetMax, nbPlaces, equipements, sexe } = req.query;
+  const { ville, typeAnnonce, budgetMax, nbPlaces, equipements, sexe, filiere } = req.query;
   const where: any = { statut: 'ACTIVE' };
   if (ville) where.ville = { contains: String(ville), mode: 'insensitive' };
   if (typeAnnonce) where.type = typeAnnonce;
@@ -13,11 +13,15 @@ export const listerAnnonces = async (req: Request, res: Response) => {
     const eqs = String(equipements).split(',');
     where.equipements = { hasEvery: eqs };
   }
-  if (sexe) where.proprietaire = { sexe: String(sexe) };
+  if (sexe || filiere) {
+    where.proprietaire = {};
+    if (sexe) where.proprietaire.sexe = String(sexe);
+    if (filiere) where.proprietaire.filiere = { contains: String(filiere), mode: 'insensitive' };
+  }
   const annonces = await prisma.annonce.findMany({
     where,
     include: {
-      proprietaire: { select: { id: true, nom: true, prenom: true, photo: true, sexe: true } },
+      proprietaire: { select: { id: true, nom: true, prenom: true, photo: true, sexe: true, filiere: true } },
     },
     orderBy: { createdAt: 'desc' },
     take: 50,

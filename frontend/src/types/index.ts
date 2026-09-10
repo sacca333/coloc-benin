@@ -102,6 +102,7 @@ export interface FiltresAnnonce {
   equipements?: string[];
   nbPlaces?: number;
   sexe?: Sexe;
+  filiere?: string;
 }
 
 // Filtres recherche colocataires

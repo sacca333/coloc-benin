@@ -8,6 +8,7 @@ const CHIPS = [
   { key: 'budget', label: '💰 Budget' },
   { key: 'equipements', label: '✨ Equipements' },
   { key: 'sexe', label: '👤 Sexe' },
+  { key: 'filiere', label: '🎓 Filière' },
 ];
 
 interface SearchBarProps {

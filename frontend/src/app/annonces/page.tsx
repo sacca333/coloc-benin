@@ -67,8 +67,7 @@ export default function AnnoncesPage() {
         <div className="mb-6">
 
           {/* Header avec bouton publier */}
-          <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
-            <h1 className="text-xl font-semibold">Annonces de colocation</h1>
+          <div className="flex items-center justify-end mb-4 flex-wrap gap-3">
             <Link href="/annonces/creer"
               className="hidden md:flex items-center gap-2 px-4 py-2 rounded-xl bg-sky-700 text-white text-sm font-semibold hover:bg-sky-600 transition-colors shadow-sm">
               <span className="text-lg leading-none">+</span> Publier une annonce
@@ -178,6 +177,21 @@ export default function AnnoncesPage() {
               </div>
             )}
 
+            {activeFilter === 'filiere' && (
+              <div>
+                <label className="text-xs font-semibold text-gray-500 mb-2 block uppercase tracking-wide">
+                  Filière du propriétaire
+                </label>
+                <input
+                  type="text"
+                  className="input text-sm max-w-xs"
+                  placeholder="Ex : Informatique, Droit, Médecine..."
+                  defaultValue={filtres.filiere || ''}
+                  onChange={e => updateFiltre('filiere', e.target.value)}
+                />
+              </div>
+            )}
+
           </div>
         )}
 
@@ -262,10 +276,10 @@ function AnnonceCard({ annonce }: { annonce: Annonce }) {
           <div className="flex items-start justify-between gap-2">
             <div>
               <span className={clsx('text-xs px-2 py-0.5 rounded-full font-medium', annonce.type === 'LOGEMENT_DISPONIBLE' ? 'bg-sky-50 text-sky-800' : 'bg-teal-50 text-teal-600')}>
-                {annonce.type === 'LOGEMENT_DISPONIBLE' ? 'Chambre à Louer Disponible' : 'Place en coloc'}
+                {annonce.type === 'LOGEMENT_DISPONIBLE' ? 'Logement' : 'Place en coloc'}
               </span>
               <h3 className="font-medium text-sm mt-1">{annonce.quartier || annonce.adresse || annonce.ville}</h3>
-              <p className="text-xs text-gray-500">{annonce.ville}</p>
+              <p className="text-xs text-gray-500">{annonce.ville} · {annonce.nbPlaces} place{annonce.nbPlaces > 1 ? 's' : ''}</p>
             </div>
             <div className="flex flex-col items-end gap-1 flex-shrink-0">
               <p className="font-semibold text-gray-900">{annonce.loyerTotal.toLocaleString()} FCFA</p>
