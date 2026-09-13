@@ -89,6 +89,32 @@ export default function ConversationPage() {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  // Empeche le navigateur de faire defiler toute la page quand le clavier s'ouvre :
+  // seule la liste des messages doit defiler, comme sur Messenger.
+  useEffect(() => {
+    const original = {
+      overflow: document.body.style.overflow,
+      position: document.body.style.position,
+      width: document.body.style.width,
+      height: document.body.style.height,
+    };
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.width = '100%';
+    document.body.style.height = '100%';
+    return () => {
+      document.body.style.overflow = original.overflow;
+      document.body.style.position = original.position;
+      document.body.style.width = original.width;
+      document.body.style.height = original.height;
+    };
+  }, []);
+
+  const handleInputFocus = () => {
+    // Laisse le clavier/viewport se stabiliser avant de recadrer sur le dernier message
+    setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 300);
+  };
+
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (optionsRef.current && !optionsRef.current.contains(e.target as Node)) setOptionsOpen(false);
@@ -372,7 +398,7 @@ export default function ConversationPage() {
         <input ref={fileInputRef} type="file" accept="image/*,video/*" onChange={handleFileSelect} className="sr-only" />
 
         <div className="flex-1 bg-sky-700 rounded-2xl px-4 py-2.5">
-          <textarea value={contenu} onChange={e => setContenu(e.target.value)} onKeyDown={handleKeyDown} rows={1}
+          <textarea value={contenu} onChange={e => setContenu(e.target.value)} onKeyDown={handleKeyDown} onFocus={handleInputFocus} rows={1}
             disabled={blocageInfo.jaiBloque || blocageInfo.mEstBloque}
             className="flex-1 w-full bg-transparent outline-none text-sm text-white placeholder-sky-300 resize-none disabled:opacity-40"
             placeholder={blocageInfo.mEstBloque ? 'Vous ne pouvez plus envoyer de messages' : blocageInfo.jaiBloque ? 'Vous avez bloque cet utilisateur' : 'Entrez un message...'}
