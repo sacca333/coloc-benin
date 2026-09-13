@@ -199,7 +199,7 @@ export default function ConversationPage() {
   if (loading) return <div className="min-h-screen flex items-center justify-center text-gray-400">Chargement...</div>;
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-dvh">
 
       {/* Toast */}
       {toast && (
