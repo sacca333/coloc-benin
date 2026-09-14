@@ -6,6 +6,7 @@ import { z } from 'zod';
 import { useParams, useRouter } from 'next/navigation';
 import { useAuth } from '../../../../hooks/useAuth';
 import { Navbar } from '../../../../components/layout/Navbar';
+import { VilleAutocomplete } from '../../../../components/ui/VilleAutocomplete'; 
 import api, { annoncesApi, villesApi } from '../../../../lib/api';
 
 const schema = z.object({
@@ -185,10 +186,7 @@ export default function ModifierAnnoncePage() {
                                 <label className="block text-sm text-gray-700 mb-1">
                                     Ville <span className="text-red-400">*</span>
                                 </label>
-                                <select {...register('ville')} className="input">
-                                    <option value="">Sélectionner une ville</option>
-                                    {villes.map(v => <option key={v} value={v}>{v}</option>)}
-                                </select>
+                                <VilleAutocomplete value={watch('ville') || ''} onChange={v => setValue('ville', v)} villes={villes} />
                                 {errors.ville && <p className="text-xs text-red-500 mt-1">{errors.ville.message}</p>}
                             </div>
                             <div className="grid grid-cols-2 gap-3">
